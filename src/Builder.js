@@ -6,7 +6,7 @@ define(function(){
       this.y = y;
       this.orientation = 'North';
       this.ctx = ctx;
-      this.showYourself();
+
     }
     build() {
       alert( 'work' );
@@ -41,6 +41,9 @@ define(function(){
     }
     getOrientation( orientation ) {
       this.orientation = orientation;
+    }
+    getCoords() {
+      return [this.x, this.y];
     }
   }
 });

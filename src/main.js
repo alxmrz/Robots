@@ -1,4 +1,3 @@
-requirejs(['Application', 'Scene'], function(Application, Scene){
-
+requirejs(['../src/Application', '../src/Scene'], function(Application, Scene){
   (new Application(new Scene())).main();
 })
