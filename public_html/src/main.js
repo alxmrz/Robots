@@ -1,2 +1,3 @@
-
-(new Application()).main();
+requirejs(['Application'], function(Application){
+  (new Application()).main();
+})
