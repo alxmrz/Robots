@@ -1,7 +1,8 @@
 
    QUnit.config.autostart = false;
     requirejs([
-      "ApplicationTest"
+      "ApplicationTest",
+      "SceneTest"
     ], function(){
       QUnit.start();
     });

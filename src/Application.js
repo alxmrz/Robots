@@ -1,9 +1,18 @@
 define(['../src/Scene'], function(Scene){
   return class Application{
-      main() {
-        let scene = new Scene();
+      constructor(scene) {
+        if(!(scene instanceof Scene)) {
+          throw new Error('Scene is not provided!');
+        }
+        this.scene = scene;
+      }
 
-        scene.show();
+      main() {
+        this.scene.show();
+      }
+
+      getScene() {
+        return this.scene;
       }
   }
 

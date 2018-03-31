@@ -1,3 +1,4 @@
-requirejs(['Application'], function(Application){
-  (new Application()).main();
+requirejs(['Application', 'Scene'], function(Application, Scene){
+
+  (new Application(new Scene())).main();
 })
