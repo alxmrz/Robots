@@ -1,4 +1,4 @@
-define(['SceneGrid', 'Builder'], function (SceneGrid, Builder) {
+define(['../src/SceneGrid', '../src/Builder'], function (SceneGrid, Builder) {
   return class Scene
   {
     show() {
