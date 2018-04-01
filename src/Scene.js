@@ -24,37 +24,52 @@ define(['../src/SceneGrid', '../src/Builder', '../src/BuilderFabric'], function 
 
     show(eventRegister) {
 
-      this.ctx.clearRect(0,0,document.getElementById('canvas').clientWidth,document.getElementById('canvas').clientHeight);
-      var time = new Date();
+      this.ctx.clearRect(0,0,this.canvas.clientWidth,this.canvas.clientHeight);
 
       for (var i = 0; i < this.builders.length; i++) {
-        if(true) {
-          let coords = this.builders[i].getCoords();
+        let coords = this.builders[i].getCoords();
 
-          if(eventRegister.clickCoords !== undefined) {
-            let clickedX = eventRegister.clickCoords[0];
-            let clickedY = eventRegister.clickCoords[1];
-
-            if((clickedX >= coords[0]&&clickedX<=coords[0]+25)
-              && clickedY >= coords[1]&&clickedY<=coords[1]+25
-            ) {
-              this.builders[i].chosen = true;
-            } else if(this.builders[i].chosen) {
-              this.builders[i].chosen = false;
-            }
-            console.log(eventRegister.clickCoords);
-          }
-
-          if(coords[0] < 301) {
-            this.builders[i].setCoords(coords[0]+1, coords[1]);
-          }
-
+        this.selectObjectIfClicked(eventRegister.clickCoords, coords, this.builders[i]);
+        if(this.builders[i].chosen && eventRegister.rightClickCoords != undefined) {
+          this.setNewCoordsToSelectedObject(eventRegister.rightClickCoords, this.builders[i]);
         }
 
-
+        this.moveSelectedObjectToSpecialCoords(eventRegister.rightClickCoords, this.builders[i])
+        if(coords[0] < 301) {
+          this.builders[i].setCoords(coords[0]+1, coords[1]);
+        }
 
         this.builders[i].showYourself();
       }
+    }
+
+    selectObjectIfClicked(clickCoords, coords, object) {
+      if(clickCoords !== undefined) {
+        let clickedX = clickCoords[0];
+        let clickedY = clickCoords[1];
+        let objectX = coords[0];
+        let objectY = coords[1];
+
+        if((clickedX >= objectX&&clickedX<=objectX+25)
+          && clickedY >= objectY&&clickedY<=objectY+25
+        ) {
+          object.chosen = true;
+          this.setLogObjectInfo(object);
+        } else if(object.chosen) {
+          object.chosen = false;
+        }
+      }
+    }
+    setLogObjectInfo(object) {
+      let objectInfo = document.getElementById("objectInfo");
+      objectInfo.innerHTML = JSON.stringify(object, null, ' ');
+    }
+    setNewCoordsToSelectedObject(newCoords, object) {
+      object.x = newCoords[0];
+      object.y = newCoords[1];
+    }
+    moveSelectedObjectToSpecialCoords(spCoords, object) {
+
     }
 
   }
