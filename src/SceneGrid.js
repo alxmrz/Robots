@@ -1,15 +1,17 @@
 define(function(){
   return class SceneGrid
   {
-    constructor( ctx ) {
-      this.ctx = ctx;
-
-    }
     printGrid(){
+      this.getCanvasGrid();
       this.printHorizontalLines();
       this.printVerticalLines();
-
     }
+
+    getCanvasGrid() {
+      this.canvas = document.getElementById("canvasGrid");
+      this.ctx = this.canvas.getContext("2d");
+    }
+
     printHorizontalLines() {
       var canvasWidth = document.getElementById('canvas').clientWidth;
       var canvasHeight = document.getElementById('canvas').clientHeight;
@@ -20,6 +22,7 @@ define(function(){
 
       }
     }
+
     printVerticalLines() {
       var canvasWidth = document.getElementById('canvas').clientWidth;
       var canvasHeight = document.getElementById('canvas').clientHeight;

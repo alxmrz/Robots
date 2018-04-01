@@ -1,4 +1,4 @@
-define(['../src/Scene'], function(Scene){
+define(['../src/Scene', '../src/EventRegister'], function(Scene, EventRegister){
   return class Application{
       constructor(scene) {
         if(!(scene instanceof Scene)) {
@@ -8,7 +8,17 @@ define(['../src/Scene'], function(Scene){
       }
 
       main() {
-        this.scene.show();
+        this.eventRegister = new EventRegister();
+        this.eventRegister.registerAllEvents();
+
+        this.scene.init();
+        this.game();
+      }
+
+      game() {
+        this.scene.show(this.eventRegister);
+        this.eventRegister.resetMouseEventsCoords();
+        window.requestAnimationFrame(this.game.bind(this));
       }
 
       getScene() {

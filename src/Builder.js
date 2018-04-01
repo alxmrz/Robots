@@ -4,15 +4,20 @@ define(function(){
     constructor( x, y, ctx ) {
       this.x = x;
       this.y = y;
+      this.fillStyle = 'green'
       this.orientation = 'North';
       this.ctx = ctx;
+      this.chosen = false;
 
     }
-    build() {
-      alert( 'work' );
-    }
+
     showYourself() {
-      this.ctx.fillStyle = "green";
+      if(this.chosen) {
+        this.ctx.fillStyle = 'blue';
+      } else {
+        this.ctx.fillStyle = this.fillStyle;
+      }
+
 
       this.ctx.fillRect( this.x, this.y, 25, 25 );
       this.printOrientation();
@@ -44,6 +49,10 @@ define(function(){
     }
     getCoords() {
       return [this.x, this.y];
+    }
+    setCoords(x,y) {
+      this.x = x;
+      this.y = y;
     }
   }
 });

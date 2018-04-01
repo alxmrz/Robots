@@ -1,3 +1,3 @@
-requirejs(['../src/Application', '../src/Scene'], function(Application, Scene){
-  (new Application(new Scene())).main();
+requirejs(['../src/Application', '../src/Scene', '../src/BuilderFabric'], function(Application, Scene, BuilderFabric){
+  (new Application(new Scene(new BuilderFabric))).main();
 })
