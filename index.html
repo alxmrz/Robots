@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Robots</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <div style="float:right;">
+      <p>Actions:</p>
+      <div>
+        <input type="button" id="buildWall" value="Строить стену" onclick="alert('Недоступно!')"/>
+      </div>
+      <div>
+        <pre>
+        <p id="objectInfo"></p>
+      </pre>
+      </div>
+    </div>
+    <div>
+      mouseX<input type="text" id="mouseX"> mouseY<input type="text" id="mouseY">
+    </div>
+    <canvas id="canvasGrid" width="1025" height="600" style="position:absolute;z-index:1">
+      Your browser does not support canvas technology!
+    </canvas>
+    <canvas id="canvas" width="1025" height="600" style="position:absolute;z-index:2">
+      Your browser does not support canvas technology!
+    </canvas>
+    <script data-main="src/main" src="bower_components/requirejs/require.js"></script>
+  </body>
+</html>
