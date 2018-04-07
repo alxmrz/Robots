@@ -1,25 +1,20 @@
-define(['../src/SceneGrid', '../src/Builder', '../src/BuilderFabric'], function (SceneGrid, Builder, BuilderFabric) {
+define(['../src/SceneGrid', '../src/Builder', '../src/SuperFabric'], function (SceneGrid, Builder, SuperFabric) {
   return class Scene
   {
-    constructor(builderFabric) {
-      this.bf = builderFabric;
+    constructor(superFabric) {
+      this.sf = superFabric;
       this.builders = [];
+      this.canvas = this.sf.getElementById("canvas");
+      this.ctx = this.canvas.getContext("2d");
+      this.sceneGrid = this.sf.getSceneGrid();
     }
 
     init() {
-      this.getMainCanvas();
-
-      this.sceneGrid = new SceneGrid();
       this.sceneGrid.printGrid();
 
-      this.builders[0] = this.bf.getBuilder(25,25, this.ctx);
-      this.builders[1] = this.bf.getBuilder(25,75, this.ctx);
-      this.builders[2] = this.bf.getBuilder(25,125, this.ctx);
-    }
-
-    getMainCanvas() {
-      this.canvas = document.getElementById("canvas");
-      this.ctx = this.canvas.getContext("2d");
+      this.builders[0] = this.sf.getBuilder(25,25, this.ctx);
+      this.builders[1] = this.sf.getBuilder(25,75, this.ctx);
+      this.builders[2] = this.sf.getBuilder(25,125, this.ctx);
     }
 
     show(eventRegister) {
@@ -72,5 +67,20 @@ define(['../src/SceneGrid', '../src/Builder', '../src/BuilderFabric'], function 
 
     }
 
+    getFabric() {
+      return this.sf;
+    }
+    getBuilders() {
+      return this.builders;
+    }
+    getCanvas() {
+      return this.canvas;
+    }
+    getContext() {
+      return this.ctx;
+    }
+    getSceneGrid() {
+      return this.sceneGrid;
+    }
   }
 })

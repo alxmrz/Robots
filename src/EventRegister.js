@@ -7,6 +7,7 @@ define(function(){
       this.registerMouseMove();
       this.registerContexMenuClick();
     }
+    
     registerMouserClick() {
       this.canvas.onclick = function(e) {
         var mouseX = document.getElementById("mouseX");
@@ -16,6 +17,7 @@ define(function(){
         this.clickCoords = [x,y];
       }.bind(this);
     }
+    
     registerMouseMove() {
       this.canvas.onmousemove = function(e){
         var mouseX = document.getElementById("mouseX");
@@ -27,6 +29,7 @@ define(function(){
         this.lastMouseCoords = [x,y];
       }.bind(this);
     }
+    
     registerContexMenuClick() {
       this.canvas.oncontextmenu = function(e){
         var mouseX = document.getElementById("mouseX");
@@ -40,10 +43,12 @@ define(function(){
         return false;
       }.bind(this);
     }
+    
     getMainCanvas() {
       this.canvas = document.getElementById("canvas");
       this.ctx = this.canvas.getContext("2d");
     }
+    
     resetMouseEventsCoords() {
       this.clickCoords = undefined;
       this.lastMouseCoords = undefined;

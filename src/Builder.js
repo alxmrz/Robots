@@ -41,6 +41,7 @@ define(function(){
       }
 
     }
+    
     setOrientation( orientation ) {
       this.orientation = orientation;
     }

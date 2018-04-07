@@ -1,14 +1,14 @@
-define(['../src/Scene', '../src/EventRegister'], function(Scene, EventRegister){
+define(['../src/Scene'], function(Scene){
   return class Application{
-      constructor(scene) {
+      constructor(scene, eventRegister) {
         if(!(scene instanceof Scene)) {
           throw new Error('Scene is not provided!');
         }
         this.scene = scene;
+        this.eventRegister = eventRegister;
       }
 
       main() {
-        this.eventRegister = new EventRegister();
         this.eventRegister.registerAllEvents();
 
         this.scene.init();
@@ -23,6 +23,10 @@ define(['../src/Scene', '../src/EventRegister'], function(Scene, EventRegister){
 
       getScene() {
         return this.scene;
+      }
+
+      getEventRegister() {
+        return this.eventRegister;
       }
   }
 
