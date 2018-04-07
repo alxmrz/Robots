@@ -1,11 +1,12 @@
-define(['../../src/SuperFabric', '../../src/Builder', '../../src/SceneGrid'], function(SuperFabric, Builder,SceneGrid){
+define(['../../src/SuperFabric', '../../src/Builder', '../../src/SceneGrid', '../../src/Point'],
+function(SuperFabric, Builder,SceneGrid, Point){
   QUnit.module("unit/SuperFabricTest");
 
   QUnit.test( "Get builder instance when it is requested", function( assert ) {
     let sf = new SuperFabric();
-    let builder = sf.getBuilder(20,20,{});
+    let builder = sf.getBuilder(new Point(20,20),{});
     assert.ok( builder instanceof Builder);
-    assert.deepEqual (builder.getCoords(), [20,20]);
+    assert.deepEqual (builder.getCoords(), new Point(20,20));
   });
 
   QUnit.test( "Get special object by id", function( assert ) {
@@ -25,7 +26,7 @@ define(['../../src/SuperFabric', '../../src/Builder', '../../src/SceneGrid'], fu
 
   QUnit.test( "Get SceneGrid instance when it is requested", function( assert ) {
     let sf = new SuperFabric();
-    let sceneGrid = sf.getSceneGrid(20,20,{});
+    let sceneGrid = sf.getSceneGrid(new Point(20,20),{});
     assert.ok( sceneGrid instanceof SceneGrid);
   });
 

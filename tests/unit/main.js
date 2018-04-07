@@ -2,7 +2,8 @@
   requirejs([
     "ApplicationTest",
     "SceneTest",
-    "SuperFabricTest"
+    "SuperFabricTest",
+    "PointTest"
   ], function(){
     QUnit.start();
   });

@@ -1,47 +1,50 @@
-define(function(){
+define(['../src/Point'], function(Point){
   return class Builder
   {
-    constructor( x, y, ctx ) {
-      this.x = x;
-      this.y = y;
-      this.fillStyle = 'green'
+    constructor( point, ctx ) {
+      this.point = point;
+      this.fillStyle = 'green';
       this.orientation = 'North';
       this.ctx = ctx;
+      this.width = 25;
+      this.height = 25;
       this.chosen = false;
 
     }
 
     showYourself() {
+      this.setBlueColorIfObjectChosen();
+      this.ctx.fillRect( this.point.getX(), this.point.getY(), this.width, this.height );
+      this.printOrientation();
+    }
+
+    setBlueColorIfObjectChosen() {
       if(this.chosen) {
         this.ctx.fillStyle = 'blue';
       } else {
         this.ctx.fillStyle = this.fillStyle;
       }
-
-
-      this.ctx.fillRect( this.x, this.y, 25, 25 );
-      this.printOrientation();
     }
     printOrientation() {
       this.ctx.fillStyle = "red";
       switch ( this.orientation ) {
         case 'North':
-          this.ctx.fillRect( this.x, this.y - 2, 25, 1 );
+          this.ctx.fillRect( this.point.getX(), this.point.getY() - 2, this.width, 1 );
           break;
         case 'South':
-          this.ctx.fillRect( this.x, this.y + 24, 25, 1 );
+          this.ctx.fillRect( this.point.getX(), this.point.getY()+ 24, this.width, 1 );
           break;
         case 'West':
-          this.ctx.fillRect( this.x - 2, this.y, 1, 25 );
+          this.ctx.fillRect( this.point.getX() - 2, this.point.getY(), 1, this.height );
           break;
         case 'East':
-          this.ctx.fillRect( this.x + 24, this.y, 1, 25 );
+          this.ctx.fillRect( this.point.getX() + 24, this.point.getY(), 1, this.height );
           break;
 
       }
 
     }
-    
+
     setOrientation( orientation ) {
       this.orientation = orientation;
     }
@@ -49,11 +52,10 @@ define(function(){
       this.orientation = orientation;
     }
     getCoords() {
-      return [this.x, this.y];
+      return this.point;
     }
-    setCoords(x,y) {
-      this.x = x;
-      this.y = y;
+    setCoords(point) {
+      this.point = point;
     }
   }
 });

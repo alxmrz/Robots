@@ -1,4 +1,5 @@
-define(['../src/SceneGrid', '../src/Builder', '../src/SuperFabric'], function (SceneGrid, Builder, SuperFabric) {
+define(['../src/SceneGrid', '../src/Builder', '../src/SuperFabric', '../src/Point'],
+function (SceneGrid, Builder, SuperFabric, Point) {
   return class Scene
   {
     constructor(superFabric) {
@@ -12,9 +13,9 @@ define(['../src/SceneGrid', '../src/Builder', '../src/SuperFabric'], function (S
     init() {
       this.sceneGrid.printGrid();
 
-      this.builders[0] = this.sf.getBuilder(25,25, this.ctx);
-      this.builders[1] = this.sf.getBuilder(25,75, this.ctx);
-      this.builders[2] = this.sf.getBuilder(25,125, this.ctx);
+      this.builders[0] = this.sf.getBuilder(new Point(25,25), this.ctx);
+      this.builders[1] = this.sf.getBuilder(new Point(25,75), this.ctx);
+      this.builders[2] = this.sf.getBuilder(new Point(25,125), this.ctx);
     }
 
     show(eventRegister) {
@@ -30,8 +31,8 @@ define(['../src/SceneGrid', '../src/Builder', '../src/SuperFabric'], function (S
         }
 
         this.moveSelectedObjectToSpecialCoords(eventRegister.rightClickCoords, this.builders[i])
-        if(coords[0] < 301) {
-          this.builders[i].setCoords(coords[0]+1, coords[1]);
+        if(coords.getX() < 301) {
+          this.builders[i].setCoords(new Point(coords.getX()+1, coords.getY()));
         }
 
         this.builders[i].showYourself();
@@ -40,10 +41,10 @@ define(['../src/SceneGrid', '../src/Builder', '../src/SuperFabric'], function (S
 
     selectObjectIfClicked(clickCoords, coords, object) {
       if(clickCoords !== undefined) {
-        let clickedX = clickCoords[0];
-        let clickedY = clickCoords[1];
-        let objectX = coords[0];
-        let objectY = coords[1];
+        let clickedX = clickCoords.getX();
+        let clickedY = clickCoords.getY();
+        let objectX = coords.getX();
+        let objectY = coords.getY();
 
         if((clickedX >= objectX&&clickedX<=objectX+25)
           && clickedY >= objectY&&clickedY<=objectY+25
@@ -55,13 +56,15 @@ define(['../src/SceneGrid', '../src/Builder', '../src/SuperFabric'], function (S
         }
       }
     }
+
     setLogObjectInfo(object) {
       let objectInfo = document.getElementById("objectInfo");
       objectInfo.innerHTML = JSON.stringify(object, null, ' ');
     }
+
     setNewCoordsToSelectedObject(newCoords, object) {
-      object.x = newCoords[0];
-      object.y = newCoords[1];
+      object.x = newCoords.getX();
+      object.y = newCoords.getY();
     }
     moveSelectedObjectToSpecialCoords(spCoords, object) {
 
