@@ -1,4 +1,4 @@
-define(['../src/Point'], function(Point){
+define(['../src/Point', '../src/Wall'], function(Point, Wall){
   return class Builder
   {
     constructor( point, ctx ) {
@@ -9,7 +9,7 @@ define(['../src/Point'], function(Point){
       this.width = 25;
       this.height = 25;
       this.chosen = false;
-
+      this.name = 'Строитель';
     }
 
     showYourself() {
@@ -24,6 +24,9 @@ define(['../src/Point'], function(Point){
       } else {
         this.ctx.fillStyle = this.fillStyle;
       }
+    }
+    buildWall() {
+      return new Wall(new Point(this.point.getX(), this.point.getY()), this.ctx);
     }
     printOrientation() {
       this.ctx.fillStyle = "red";

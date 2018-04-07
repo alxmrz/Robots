@@ -4,7 +4,7 @@ function (SceneGrid, Builder, SuperFabric, Point) {
   {
     constructor(superFabric) {
       this.sf = superFabric;
-      this.builders = [];
+      this.sceneObject = [];
       this.canvas = this.sf.getElementById("canvas");
       this.ctx = this.canvas.getContext("2d");
       this.sceneGrid = this.sf.getSceneGrid();
@@ -13,29 +13,36 @@ function (SceneGrid, Builder, SuperFabric, Point) {
     init() {
       this.sceneGrid.printGrid();
 
-      this.builders[0] = this.sf.getBuilder(new Point(25,25), this.ctx);
-      this.builders[1] = this.sf.getBuilder(new Point(25,75), this.ctx);
-      this.builders[2] = this.sf.getBuilder(new Point(25,125), this.ctx);
+      this.sceneObject[0] = this.sf.getBuilder(new Point(25,25), this.ctx);
+      this.sceneObject[1] = this.sf.getBuilder(new Point(25,75), this.ctx);
+      this.sceneObject[2] = this.sf.getBuilder(new Point(25,125), this.ctx);
     }
 
     show(eventRegister) {
 
       this.ctx.clearRect(0,0,this.canvas.clientWidth,this.canvas.clientHeight);
 
-      for (var i = 0; i < this.builders.length; i++) {
-        let coords = this.builders[i].getCoords();
+      for (var i = 0; i < this.sceneObject.length; i++) {
 
-        this.selectObjectIfClicked(eventRegister.clickCoords, coords, this.builders[i]);
-        if(this.builders[i].chosen && eventRegister.rightClickCoords != undefined) {
-          this.setNewCoordsToSelectedObject(eventRegister.rightClickCoords, this.builders[i]);
-        }
+        let coords = this.sceneObject[i].getCoords();
 
-        this.moveSelectedObjectToSpecialCoords(eventRegister.rightClickCoords, this.builders[i])
-        if(coords.getX() < 301) {
-          this.builders[i].setCoords(new Point(coords.getX()+1, coords.getY()));
-        }
+        this.selectObjectIfClicked(eventRegister.clickCoords, coords, this.sceneObject[i]);
 
-        this.builders[i].showYourself();
+          if(this.sceneObject[i] instanceof Builder) {
+            if(this.sceneObject[i].chosen && eventRegister.rightClickCoords != undefined) {
+              this.setNewCoordsToSelectedObject(eventRegister.rightClickCoords, this.sceneObject[i]);
+            }
+
+            this.moveSelectedObjectToSpecialCoords(eventRegister.rightClickCoords, this.sceneObject[i])
+            if(coords.getX() < 301) {
+              if(coords.getX()%50 == 0 && coords.getX() !== 300) {
+                this.sceneObject.push(this.sceneObject[i].buildWall()) ;
+              }
+              this.sceneObject[i].setCoords(new Point(coords.getX()+1, coords.getY()));
+            }
+          }
+
+        this.sceneObject[i].showYourself();
       }
     }
 
@@ -63,8 +70,7 @@ function (SceneGrid, Builder, SuperFabric, Point) {
     }
 
     setNewCoordsToSelectedObject(newCoords, object) {
-      object.x = newCoords.getX();
-      object.y = newCoords.getY();
+      object.setCoords(newCoords) ;
     }
     moveSelectedObjectToSpecialCoords(spCoords, object) {
 
@@ -73,8 +79,8 @@ function (SceneGrid, Builder, SuperFabric, Point) {
     getFabric() {
       return this.sf;
     }
-    getBuilders() {
-      return this.builders;
+    getsceneObject() {
+      return this.sceneObject;
     }
     getCanvas() {
       return this.canvas;

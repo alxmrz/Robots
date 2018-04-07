@@ -3,7 +3,8 @@
     "ApplicationTest",
     "SceneTest",
     "SuperFabricTest",
-    "PointTest"
+    "PointTest",
+    "WallTest"
   ], function(){
     QUnit.start();
   });
