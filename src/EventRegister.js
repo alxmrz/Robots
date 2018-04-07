@@ -17,11 +17,13 @@ define(['../src/Point'],function(Point){
     getCanvasMouseX(e) {
       var mouseX = document.getElementById("mouseX");
       var x = e.pageX - this.canvas.offsetLeft;
+      mouseX.value = x;
       return x;
     }
     getCanvasMouseY(e) {
       var mouseY = document.getElementById("mouseY");
       var y = e.pageY - this.canvas.offsetTop;
+      mouseY.value = y;
       return y;
     }
 
