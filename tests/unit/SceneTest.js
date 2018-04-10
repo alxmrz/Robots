@@ -19,7 +19,7 @@ function(Scene, SuperFabric, SceneGrid, Builder){
   QUnit.test( "Setting SuperFabric and empty builders array after init", function( assert ) {
     let scene = new Scene(QUnit.sf);
     assert.strictEqual(QUnit.sf, scene.getFabric(),'Super fabrics is the same object');
-    assert.deepEqual([], scene.getBuilders(), 'Empty builders provided');
+    assert.deepEqual([], scene.sceneObject, 'Empty builders provided');
     assert.deepEqual({type: 'canvas'}.type, scene.getCanvas().type, 'Empty builders provided');
     assert.deepEqual({type: '2d'}, scene.getContext(), 'Empty builders provided');
     assert.ok(scene.getSceneGrid() instanceof SceneGrid);
@@ -37,8 +37,8 @@ function(Scene, SuperFabric, SceneGrid, Builder){
     let scene = new Scene(QUnit.sf);
     scene.init();
     assert.ok(scene.getSceneGrid().printGridCalled);
-    for(var i=0;i<scene.getBuilders().length;i++) {
-      assert.ok(scene.getBuilders()[i] instanceof Builder)
+    for(var i=0;i<scene.sceneObject.length;i++) {
+      assert.ok(scene.sceneObject[i] instanceof Builder)
     }
   });
 

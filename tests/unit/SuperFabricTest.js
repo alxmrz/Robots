@@ -1,5 +1,5 @@
-define(['../../src/SuperFabric', '../../src/Builder', '../../src/SceneGrid', '../../src/Point'],
-function(SuperFabric, Builder,SceneGrid, Point){
+define(['../../src/SuperFabric', '../../src/Builder', '../../src/SceneGrid', '../../src/Point', '../../src/Wall'],
+function(SuperFabric, Builder,SceneGrid, Point, Wall){
   QUnit.module("unit/SuperFabricTest");
 
   QUnit.test( "Get builder instance when it is requested", function( assert ) {
@@ -9,7 +9,7 @@ function(SuperFabric, Builder,SceneGrid, Point){
     assert.deepEqual (builder.getCoords(), new Point(20,20));
   });
 
-  QUnit.test( "Get special object by id", function( assert ) {
+  QUnit.test( "Get special DOM object by id", function( assert ) {
     let sf = new SuperFabric();
     let canvas = {type: 'canvas'};
     let canvasGrid = {type: 'canvasGrid'};
@@ -28,6 +28,18 @@ function(SuperFabric, Builder,SceneGrid, Point){
     let sf = new SuperFabric();
     let sceneGrid = sf.getSceneGrid(new Point(20,20),{});
     assert.ok( sceneGrid instanceof SceneGrid);
+  });
+  
+    QUnit.test( "Get point instance when it is requested", function( assert ) {
+    let sf = new SuperFabric();
+    let point = sf.getPoint(20,20);
+    assert.ok( point instanceof Point);
+  });
+  
+  QUnit.test( "Get wall instance when it is requested", function( assert ) {
+    let sf = new SuperFabric();
+    let wall = sf.getWall(20,20);
+    assert.ok( wall instanceof Wall);
   });
 
 });
