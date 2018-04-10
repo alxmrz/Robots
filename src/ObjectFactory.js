@@ -1,7 +1,7 @@
 define(['../src/Builder', '../src/SceneGrid', '../src/Point', '../src/Wall'], function(Builder, SceneGrid, Point, Wall){
-  class SuperFabric {
+  class ObjectFactory {
     getBuilder(x,y, ctx) {
-      return new Builder(x,y,ctx);
+      return new Builder(this.getPoint(x, y),ctx);
     }
     
     getElementById(id) {
@@ -20,5 +20,5 @@ define(['../src/Builder', '../src/SceneGrid', '../src/Point', '../src/Wall'], fu
       return new Wall(this.getPoint(x,y), ctx)
     }
   }
-  return SuperFabric;
+  return ObjectFactory;
 });

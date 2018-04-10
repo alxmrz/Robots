@@ -1,5 +1,5 @@
-define(['../../src/Application', '../../src/Scene', '../../src/EventRegister', '../../src/SuperFabric'],
-function(Application, Scene, EventRegister, SuperFabric){
+define(['../../src/Application', '../../src/Scene', '../../src/EventRegister', '../../src/ObjectFactory'],
+function(Application, Scene, EventRegister, ObjectFactory){
   QUnit.module("unit/ApplicationTest");
 
 

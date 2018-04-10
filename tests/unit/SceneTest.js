@@ -1,11 +1,11 @@
-define(['../../src/Scene', '../../src/SuperFabric', '../../src/SceneGrid', '../../src/Builder'],
-function(Scene, SuperFabric, SceneGrid, Builder){
+define(['../../src/Scene', '../../src/ObjectFactory', '../../src/SceneGrid', '../../src/Builder'],
+function(Scene, ObjectFactory, SceneGrid, Builder){
 
   QUnit.module("unit/SceneTest");
 
   QUnit.testStart(function(){
-    let sf = new SuperFabric();
-    sinon.stub(sf, 'getElementById').callsFake(function(id){
+    let factory = new ObjectFactory();
+    sinon.stub(factory, 'getElementById').callsFake(function(id){
       return {
         type: id,
         getContext: function(contextType) {
@@ -13,20 +13,20 @@ function(Scene, SuperFabric, SceneGrid, Builder){
         }
       }
     });
-    QUnit.sf = sf;
+    QUnit.factory = factory;
   });
 
-  QUnit.test( "Setting SuperFabric and empty builders array after init", function( assert ) {
-    let scene = new Scene(QUnit.sf);
-    assert.strictEqual(QUnit.sf, scene.getFabric(),'Super fabrics is the same object');
-    assert.deepEqual([], scene.sceneObject, 'Empty builders provided');
+  QUnit.test( "Setting Object and empty builders array after creating object", function( assert ) {
+    let scene = new Scene(QUnit.factory);
+    assert.strictEqual(QUnit.factory, scene.getFactory(),'Super fabrics is the same object');
+    assert.deepEqual({'builders' : []}, scene.getSceneObjects(), 'Empty builders provided');
     assert.deepEqual({type: 'canvas'}.type, scene.getCanvas().type, 'Empty builders provided');
     assert.deepEqual({type: '2d'}, scene.getContext(), 'Empty builders provided');
     assert.ok(scene.getSceneGrid() instanceof SceneGrid);
   });
 
   QUnit.test( "Setting start game scene", function( assert ) {
-    sinon.stub(QUnit.sf, 'getSceneGrid').callsFake(function(){
+    sinon.stub(QUnit.factory, 'getSceneGrid').callsFake(function(){
       return {
         printGrid: function () {
             this.printGridCalled = true;
@@ -34,11 +34,12 @@ function(Scene, SuperFabric, SceneGrid, Builder){
       }
     });
 
-    let scene = new Scene(QUnit.sf);
+    let scene = new Scene(QUnit.factory);
+    scene.level = {init: function(){}};
     scene.init();
     assert.ok(scene.getSceneGrid().printGridCalled);
-    for(var i=0;i<scene.sceneObject.length;i++) {
-      assert.ok(scene.sceneObject[i] instanceof Builder)
+    for(var i=0;i<scene.getSceneObjects().length;i++) {
+      assert.ok(scene.getSceneObjects()[i] instanceof Builder)
     }
   });
 
