@@ -18,30 +18,13 @@ function (SceneGrid, Builder, ObjectFactory, Point) {
 
     show(eventRegister) {
 
+      this.clearCanvas();
+
+      this.level.playLevelScenario(eventRegister);
+    }
+    
+    clearCanvas() {
       this.ctx.clearRect(0,0,this.canvas.clientWidth,this.canvas.clientHeight);
-
-      for (var i = 0; i < this.sceneObjects['builders'].length; i++) {
-
-        let coords = this.sceneObjects['builders'][i].getCoords();
-
-        this.selectObjectIfClicked(eventRegister.clickCoords, coords, this.sceneObjects[i]);
-
-          if(this.sceneObjects['builders'][i] instanceof Builder) {
-            if(this.sceneObjects['builders'][i].chosen && eventRegister.rightClickCoords != undefined) {
-              this.setNewCoordsToSelectedObject(eventRegister.rightClickCoords, this.sceneObjects['builders'][i]);
-            }
-
-            this.moveSelectedObjectToSpecialCoords(eventRegister.rightClickCoords, this.sceneObjects['builders'][i])
-            if(coords.getX() < 301) {
-              if(coords.getX()%50 == 0 && coords.getX() !== 300) {
-                this.sceneObjects['builders'].push(this.sceneObjects['builders'][i].buildWall()) ;
-              }
-              this.sceneObjects['builders'][i].setCoords(new Point(coords.getX()+1, coords.getY()));
-            }
-          }
-
-        this.sceneObjects['builders'][i].showYourself();
-      }
     }
 
     selectObjectIfClicked(clickCoords, coords, object) {
@@ -50,10 +33,10 @@ function (SceneGrid, Builder, ObjectFactory, Point) {
         let clickedY = clickCoords.getY();
         let objectX = coords.getX();
         let objectY = coords.getY();
-
         if((clickedX >= objectX&&clickedX<=objectX+25)
           && clickedY >= objectY&&clickedY<=objectY+25
         ) {
+          console.log('check');
           object.chosen = true;
           this.setLogObjectInfo(object);
         } else if(object.chosen) {
@@ -64,7 +47,7 @@ function (SceneGrid, Builder, ObjectFactory, Point) {
 
     setLogObjectInfo(object) {
       let objectInfo = document.getElementById("objectInfo");
-      objectInfo.innerHTML = JSON.stringify(object, null, ' ');
+      objectInfo.innerHTML = JSON.stringify(object.point, null, ' ');
     }
 
     setNewCoordsToSelectedObject(newCoords, object) {

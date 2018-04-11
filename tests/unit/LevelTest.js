@@ -1,5 +1,5 @@
 define(['../../src/Level', '../../src/Scene', '../../src/ObjectFactory'], function(Level, Scene, ObjectFactory){
-  QUnit.module("unit/PointTest");
+  QUnit.module("unit/LevelTest");
 
   QUnit.test( "Throw exception if SCENE is not provided", function( assert ) {
     assert.throws (
@@ -20,7 +20,7 @@ define(['../../src/Level', '../../src/Scene', '../../src/ObjectFactory'], functi
     let level = new Level(scene, factory);
     level.init();
     
-    assert.deepEqual(level.getBuilders()[0].getCoords(), factory.getPoint(25, 25));
+    assert.deepEqual(level.getBuilders()[0].getCoords(), factory.getPoint(0, 0));
     assert.deepEqual(level.getBuilders()[1].getCoords(), factory.getPoint(25, 75));
     assert.deepEqual(level.getBuilders()[2].getCoords(), factory.getPoint(25, 125));
   });

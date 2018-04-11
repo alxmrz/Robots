@@ -5,7 +5,6 @@ function(Application, Scene, EventRegister, ObjectFactory){
 
   QUnit.test( "After construction the Application has a scene object", function( assert ) {
     var scene = sinon.createStubInstance(Scene);
-    console.log(scene);
     var app = new Application(scene);
     assert.strictEqual( scene , app.getScene(), "Equal!" );
   });

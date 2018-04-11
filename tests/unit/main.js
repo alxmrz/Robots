@@ -5,7 +5,8 @@
     "ObjectFactoryTest",
     "PointTest",
     "WallTest",
-    "LevelTest"
+    "LevelTest",
+    "BuilderTest"
   ], function(){
     QUnit.start();
   });

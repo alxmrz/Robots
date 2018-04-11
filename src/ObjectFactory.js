@@ -16,8 +16,8 @@ define(['../src/Builder', '../src/SceneGrid', '../src/Point', '../src/Wall'], fu
       return new Point( x, y );
     }
     
-    getWall(x,y,ctx) {
-      return new Wall(this.getPoint(x,y), ctx)
+    getWall(x,y,scene) {
+      return new Wall(this.getPoint(x,y), scene)
     }
   }
   return ObjectFactory;

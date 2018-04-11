@@ -8,5 +8,15 @@ define(['../../src/Point'], function(Point){
     assert.ok( point.getX() === x);
     assert.ok( point.getY() === y);
   });
+  
+  QUnit.test( "Check changing x and y value", function( assert ) {
+    let x = 10;
+    let y = 20;
+    let point = new Point(x,y);
+    point.setX(5);
+    assert.ok( point.getX() === 5);
+    point.setY(55);
+    assert.ok( point.getY() === 55);
+  });
 
 });
