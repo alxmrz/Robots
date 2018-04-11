@@ -9,7 +9,7 @@ define(['../src/Point', '../src/Wall'], function(Point, Wall){
       this.scene = scene;
       this.ctx = scene.ctx;
       this.offsetX = undefined;
-      this.offsetY = 0;
+      this.offsetY = undefined;
       this.speed = 1;
       this.width = 25;
       this.height = 25;
@@ -64,12 +64,10 @@ define(['../src/Point', '../src/Wall'], function(Point, Wall){
           if(this.offsetX === undefined) {
             
             this.offsetX = this.point.getX() - offset;
-            console.log(this.offsetX);
             
           }
           
           if(this.point.getX() > this.offsetX) {
-            console.log(`${this.point.getX()} - ${this.offsetX} -  ${this.speed} = ${this.point.getX() - this.speed}`);
             this.point.setX(this.point.getX() - this.speed);
             return false;
           } 
@@ -86,7 +84,6 @@ define(['../src/Point', '../src/Wall'], function(Point, Wall){
           if(this.offsetY === undefined) {
             this.offsetY = this.point.getY() + offsetY;
           }
-          
           if(this.point.getY() < this.offsetY) {
             this.point.setY(this.point.getY() + this.speed);
             return false;

@@ -19,57 +19,81 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
     }
     
     setLevelInstructions(builders) {
-      builders[0].speed = 5;
+      this.buildWalls(builders[0]);
+      this.buildFactories(builders[1]);
+      
+
+
+    }
+    buildWalls(builder) {
+      builder.speed = 5;
 
       for(let x=0;x<this.scene.canvas.clientWidth-25;x+=50) {
-        builders[0].buildWall();
-        builders[0].moveRight(50);
+        builder.buildWall();
+        builder.moveRight(50);
       }
 
-      for(let y=0;y<this.scene.canvas.clientHeight;y+=50) {
-        builders[0].buildWall();
-        builders[0].moveDown(50);
+      for(let y=0;y<this.scene.canvas.clientHeight-25;y+=50) {
+        builder.buildWall();
+        builder.moveDown(50);
       }
    
       for(let x=this.scene.canvas.clientWidth-25;x>0;x-=50) {
-        builders[0].buildWall();
-        builders[0].moveLeft(50);
+        builder.buildWall();
+        builder.moveLeft(50);
       }
       
       for(let y=this.scene.canvas.clientHeight-25;y>50;y-=50) {
-        builders[0].buildWall();
-        builders[0].moveUp(50);
+        builder.buildWall();
+        builder.moveUp(50);
       }
-      builders[0].buildWall();
-      builders[0].moveRight(50);
-      
-      builders[1].moveRight(100);
-      
-      builders[1].buildWall();
-      builders[1].moveRight(50);
-      builders[1].buildWall();
-      builders[1].moveRight(50);
-      builders[1].buildWall();
-      
-      builders[1].moveDown(50);
-      builders[1].moveDown(50);
-      
-      builders[1].buildWall();
-      builders[1].moveLeft(50);
-      builders[1].buildWall();
-      builders[1].moveLeft(50);
-      builders[1].buildWall();
-      
-      builders[1].moveDown(50);
-      
-      builders[1].buildWall();
-      builders[1].moveRight(50);
-      builders[1].buildWall();
-      builders[1].moveRight(50);
-      builders[1].buildWall();
-      builders[1].moveRight(50);
-
+      builder.buildWall();
+      builder.moveRight(50);
     }
+    
+    buildFactories(builder) {
+      builder.speed = 5;
+      builder.moveRight(100);
+      
+      this.buildFactoriesBlock(builder);
+      
+      builder.moveLeft(100);
+      builder.moveDown(250);
+      this.buildFactoriesBlock(builder);
+      builder.moveRight(600);
+      builder.moveUp(100);
+      this.buildFactoriesBlock(builder);
+      builder.moveLeft(100);
+      builder.moveUp(450);
+      this.buildFactoriesBlock(builder);
+      
+      
+    }
+    buildFactoriesBlock(builder) {
+      builder.buildWall();
+      builder.moveRight(50);
+      builder.buildWall();
+      builder.moveRight(50);
+      builder.buildWall();
+      
+      builder.moveDown(50);//TODO: первый раз почему то не срабатывает!
+ 
+      
+      builder.buildWall();
+      builder.moveLeft(50);
+      builder.buildWall();
+      builder.moveLeft(50);
+      builder.buildWall();
+      
+      builder.moveDown(50);
+      
+      builder.buildWall();
+      builder.moveRight(50);
+      builder.buildWall();
+      builder.moveRight(50);
+      builder.buildWall();
+    }
+    
     
     addBuilderToScene( x, y ) {
       this.scene.sceneObjects['builders'].push(this.factory.getBuilder( x, y, this.scene ));
