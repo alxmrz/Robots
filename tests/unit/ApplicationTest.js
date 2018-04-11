@@ -1,11 +1,10 @@
-define(['../../src/Application', '../../src/Scene', '../../src/EventRegister', '../../src/SuperFabric'],
-function(Application, Scene, EventRegister, SuperFabric){
+define(['../../src/Application', '../../src/Scene', '../../src/EventRegister', '../../src/ObjectFactory'],
+function(Application, Scene, EventRegister, ObjectFactory){
   QUnit.module("unit/ApplicationTest");
 
 
   QUnit.test( "After construction the Application has a scene object", function( assert ) {
     var scene = sinon.createStubInstance(Scene);
-    console.log(scene);
     var app = new Application(scene);
     assert.strictEqual( scene , app.getScene(), "Equal!" );
   });

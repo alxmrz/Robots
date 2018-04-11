@@ -1,4 +1,4 @@
-requirejs(['../src/Application', '../src/Scene', '../src/SuperFabric', '../src/EventRegister'],
-function(Application, Scene, SuperFabric, EventRegister){
-  (new Application(new Scene(new SuperFabric), new EventRegister())).main();
+requirejs(['../src/Application', '../src/Scene', '../src/ObjectFactory', '../src/EventRegister'],
+function(Application, Scene, ObjectFactory, EventRegister){
+  (new Application(new Scene(new ObjectFactory), new EventRegister())).main();
 })

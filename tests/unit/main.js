@@ -2,9 +2,11 @@
   requirejs([
     "ApplicationTest",
     "SceneTest",
-    "SuperFabricTest",
+    "ObjectFactoryTest",
     "PointTest",
-    "WallTest"
+    "WallTest",
+    "LevelTest",
+    "BuilderTest"
   ], function(){
     QUnit.start();
   });
