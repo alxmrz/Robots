@@ -1,5 +1,5 @@
-define(['../src/SceneObject', '../src/Point', '../src/Wall', '../src/Tower', '../src/RobotFactory'], 
-function(SceneObject, Point, Wall, Tower, RobotFactory){
+define(['../src/SceneObject', '../src/Point', '../src/Wall', '../src/Tower', '../src/RobotFactory', '../src/Gate'], 
+function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
   return class Builder extends SceneObject
   {
     constructor( point, scene ) {
@@ -74,6 +74,18 @@ function(SceneObject, Point, Wall, Tower, RobotFactory){
         }
       );
     }
+    
+    buildGate(gateType) {
+      this.addNewInstruction(
+        function(gateType){
+          console.log(gateType);
+          this.scene.sceneObjects['builders'].push(new Gate(new Point(this.point.getX(), this.point.getY()), this.scene, gateType));
+          return true;
+        },
+        gateType   
+      );
+    }
+    
     buildRobotFactory() {
       this.addNewInstruction(
         function(){

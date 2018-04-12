@@ -31,6 +31,11 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
       for(let x=0;x<this.scene.canvas.clientWidth-25;x+=25) {
         if(x%400 === 0) {
           builder.buildTower();
+        } else if(x === 500){
+          builder.buildGate();
+          x+=50;
+          builder.moveRight(75);
+          continue;
         } else {
           builder.buildWall();
         }
@@ -43,6 +48,11 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
         if(y%400 === 0) {
           
           builder.buildTower();
+        } else if(y === 225) {
+          builder.buildGate('vertical');
+          y+=50;
+          builder.moveDown(75);
+          continue;
         } else {
           
           builder.buildWall();
@@ -55,6 +65,13 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
         console.log(`${this.scene.canvas.clientWidth} ${x}`)
         if(x%400 === 0 ||x === this.scene.canvas.clientWidth-25) {
           builder.buildTower();
+        } else if(x === 575){
+          builder.buildWall();
+          builder.moveLeft(75);
+          builder.buildGate();
+          builder.moveLeft(25);
+          x-=75;
+          continue;
         } else {
           builder.buildWall();
         }
@@ -65,6 +82,14 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
         if(y%400 === 0 || y === 600) {
           
           builder.buildTower();
+        } else if(y === 300) {
+          builder.buildWall();
+          builder.moveUp(75);
+          builder.buildGate('vertical');
+          builder.moveUp(25);
+          y-=75;
+         
+          continue;
         } else {
           
           builder.buildWall();
