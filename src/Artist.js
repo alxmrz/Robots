@@ -11,7 +11,7 @@ define(['../src/Builder'], function(){
           this.drawBuilderWithPrimitives(object);
           break;
         case 'Tower':
-          this.drawTowerWithPrimitives(object);
+          this.drawTowerWithSprites(object);
           break;
         case 'Wall':
           this.drawWallWithPrimitives(object);
@@ -20,7 +20,7 @@ define(['../src/Builder'], function(){
           this.drawGateWithPrimitives(object);
           break;
         case 'RobotFactory':
-          this.drawRobotFactoryWithPrimitives(object);
+          this.drawRobotFactoryWithSprites(object);
           break;
       }
     }
@@ -49,15 +49,21 @@ define(['../src/Builder'], function(){
       this.ctx.fill();
     }
     
+    drawTowerWithSprites(object) {
+      this.ctx.drawImage(document.getElementById('source'),
+                470, 0, 60, 70, object.point.getX(), object.point.getY(), object.width, object.height);
+    }
+    
     showThatChosen(object) {
       if(object.chosen) {
         this.ctx.strokeStyle = 'lime';
-        this.ctx.lineWidth=8;
+        this.ctx.lineWidth=5;
         this.ctx.strokeRect(object.point.getX(), object.point.getY(), object.width, object.height);
       }
     }
     
     drawWallWithPrimitives(object) {
+      this.showThatChosen(object);
       this.ctx.fillStyle = object.fillStyle;
       this.ctx.fillRect( object.point.getX(), object.point.getY(), object.width, object.height );
     }
@@ -70,6 +76,12 @@ define(['../src/Builder'], function(){
     drawRobotFactoryWithPrimitives(object) {
       this.ctx.fillStyle = object.fillStyle;
       this.ctx.fillRect( object.point.getX(), object.point.getY(), object.width, object.height );
+    }
+    
+    drawRobotFactoryWithSprites(object) {
+      this.showThatChosen(object);
+      this.ctx.drawImage(document.getElementById('source'),
+                405, 460, 100, 95, object.point.getX(), object.point.getY(), object.width, object.height);
     }
   }
   
