@@ -28,24 +28,74 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
     buildWalls(builder) {
       builder.speed = 5;
 
-      for(let x=0;x<this.scene.canvas.clientWidth-25;x+=50) {
-        builder.buildWall();
-        builder.moveRight(50);
+      for(let x=0;x<this.scene.canvas.clientWidth-25;x+=25) {
+        if(x%400 === 0) {
+          builder.buildTower();
+        } else if(x === 500){
+          builder.buildGate();
+          x+=50;
+          builder.moveRight(75);
+          continue;
+        } else {
+          builder.buildWall();
+        }
+        
+        builder.moveRight(25);
       }
 
-      for(let y=0;y<this.scene.canvas.clientHeight-25;y+=50) {
-        builder.buildWall();
-        builder.moveDown(50);
+      for(let y=0;y<this.scene.canvas.clientHeight-25;y+=25) {
+        
+        if(y%400 === 0) {
+          
+          builder.buildTower();
+        } else if(y === 225) {
+          builder.buildGate('vertical');
+          y+=50;
+          builder.moveDown(75);
+          continue;
+        } else {
+          
+          builder.buildWall();
+        }
+
+        builder.moveDown(25);
       }
    
-      for(let x=this.scene.canvas.clientWidth-25;x>0;x-=50) {
-        builder.buildWall();
-        builder.moveLeft(50);
+      for(let x=this.scene.canvas.clientWidth-25;x>0;x-=25) {
+        console.log(`${this.scene.canvas.clientWidth} ${x}`)
+        if(x%400 === 0 ||x === this.scene.canvas.clientWidth-25) {
+          builder.buildTower();
+        } else if(x === 575){
+          builder.buildWall();
+          builder.moveLeft(75);
+          builder.buildGate();
+          builder.moveLeft(25);
+          x-=75;
+          continue;
+        } else {
+          builder.buildWall();
+        }
+        builder.moveLeft(25);
       }
       
-      for(let y=this.scene.canvas.clientHeight-25;y>50;y-=50) {
-        builder.buildWall();
-        builder.moveUp(50);
+      for(let y=this.scene.canvas.clientHeight-25;y>25;y-=25) {
+        if(y%400 === 0 || y === 600) {
+          
+          builder.buildTower();
+        } else if(y === 300) {
+          builder.buildWall();
+          builder.moveUp(75);
+          builder.buildGate('vertical');
+          builder.moveUp(25);
+          y-=75;
+         
+          continue;
+        } else {
+          
+          builder.buildWall();
+        }
+
+        builder.moveUp(25);
       }
       builder.buildWall();
       builder.moveRight(50);
@@ -57,41 +107,34 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
       
       this.buildFactoriesBlock(builder);
       
-      builder.moveLeft(100);
+
       builder.moveDown(250);
       this.buildFactoriesBlock(builder);
       builder.moveRight(600);
-      builder.moveUp(100);
+      builder.moveUp(75);
+      this.buildFactoriesBlock(builder);
+
+      builder.moveUp(400);
       this.buildFactoriesBlock(builder);
       builder.moveLeft(100);
-      builder.moveUp(450);
-      this.buildFactoriesBlock(builder);
-      
       
     }
     buildFactoriesBlock(builder) {
-      builder.buildWall();
-      builder.moveRight(50);
-      builder.buildWall();
-      builder.moveRight(50);
-      builder.buildWall();
+      builder.buildRobotFactory();
+      builder.moveRight(75);
+      builder.buildRobotFactory();
+      builder.moveRight(75);
+      builder.buildRobotFactory();
       
-      builder.moveDown(50);//TODO: первый раз почему то не срабатывает!
+      builder.moveDown(75);
  
+      builder.buildRobotFactory();
+      builder.moveLeft(75);
+      builder.buildRobotFactory();
+      builder.moveLeft(75);
+      builder.buildRobotFactory();
+
       
-      builder.buildWall();
-      builder.moveLeft(50);
-      builder.buildWall();
-      builder.moveLeft(50);
-      builder.buildWall();
-      
-      builder.moveDown(50);
-      
-      builder.buildWall();
-      builder.moveRight(50);
-      builder.buildWall();
-      builder.moveRight(50);
-      builder.buildWall();
     }
     
     
@@ -108,7 +151,7 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
       
       //Следующий код должен быть в "Движке"
       for(let builder of builders) {
-            let localCoords = builder.getCoords();
+            let localCoords = builder.getPoint();
             this.scene.selectObjectIfClicked(eventRegister.clickCoords, localCoords, builder);
             if(builder.chosen && eventRegister.rightClickCoords !== undefined) {
               this.scene.setNewCoordsToSelectedObject(eventRegister.rightClickCoords, builder);

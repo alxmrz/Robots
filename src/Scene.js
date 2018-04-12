@@ -33,8 +33,8 @@ function (SceneGrid, Builder, ObjectFactory, Point) {
         let clickedY = clickCoords.getY();
         let objectX = coords.getX();
         let objectY = coords.getY();
-        if((clickedX >= objectX&&clickedX<=objectX+25)
-          && clickedY >= objectY&&clickedY<=objectY+25
+        if((clickedX >= objectX&&clickedX<=objectX+object.width)
+          && clickedY >= objectY&&clickedY<=objectY+object.height
         ) {
           console.log('check');
           object.chosen = true;

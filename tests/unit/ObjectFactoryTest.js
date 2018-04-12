@@ -1,12 +1,12 @@
-define(['../../src/ObjectFactory', '../../src/Builder', '../../src/SceneGrid', '../../src/Point', '../../src/Wall'],
-function(ObjectFactory, Builder,SceneGrid, Point, Wall){
+define(['../../src/ObjectFactory', '../../src/Builder', '../../src/SceneGrid', '../../src/Point', '../../src/Wall', '../../src/Scene'],
+function(ObjectFactory, Builder,SceneGrid, Point, Wall, Scene){
   QUnit.module("unit/ObjectFactoryTest");
 
   QUnit.test( "Get builder instance when it is requested", function( assert ) {
     let factory = new ObjectFactory();
     let builder = factory.getBuilder(20, 20,{});
     assert.ok( builder instanceof Builder);
-    assert.deepEqual (builder.getCoords(), new Point(20,20));
+    assert.deepEqual (builder.getPoint(), new Point(20,20));
   });
 
   QUnit.test( "Get special DOM object by id", function( assert ) {
@@ -38,7 +38,8 @@ function(ObjectFactory, Builder,SceneGrid, Point, Wall){
   
   QUnit.test( "Get wall instance when it is requested", function( assert ) {
     let factory = new ObjectFactory();
-    let wall = factory.getWall(20,20);
+    var scene = sinon.createStubInstance(Scene);
+    let wall = factory.getWall(20,20, scene);
     assert.ok( wall instanceof Wall);
   });
 
