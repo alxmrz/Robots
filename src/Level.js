@@ -82,41 +82,34 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
       
       this.buildFactoriesBlock(builder);
       
-      builder.moveLeft(100);
+
       builder.moveDown(250);
       this.buildFactoriesBlock(builder);
       builder.moveRight(600);
-      builder.moveUp(100);
+      builder.moveUp(75);
+      this.buildFactoriesBlock(builder);
+
+      builder.moveUp(400);
       this.buildFactoriesBlock(builder);
       builder.moveLeft(100);
-      builder.moveUp(450);
-      this.buildFactoriesBlock(builder);
-      
       
     }
     buildFactoriesBlock(builder) {
-      builder.buildWall();
-      builder.moveRight(50);
-      builder.buildWall();
-      builder.moveRight(50);
-      builder.buildWall();
+      builder.buildRobotFactory();
+      builder.moveRight(75);
+      builder.buildRobotFactory();
+      builder.moveRight(75);
+      builder.buildRobotFactory();
       
-      builder.moveDown(50);//TODO: первый раз почему то не срабатывает!
+      builder.moveDown(75);
  
+      builder.buildRobotFactory();
+      builder.moveLeft(75);
+      builder.buildRobotFactory();
+      builder.moveLeft(75);
+      builder.buildRobotFactory();
+
       
-      builder.buildWall();
-      builder.moveLeft(50);
-      builder.buildWall();
-      builder.moveLeft(50);
-      builder.buildWall();
-      
-      builder.moveDown(50);
-      
-      builder.buildWall();
-      builder.moveRight(50);
-      builder.buildWall();
-      builder.moveRight(50);
-      builder.buildWall();
     }
     
     

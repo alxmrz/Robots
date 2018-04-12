@@ -1,4 +1,5 @@
-define(['../src/SceneObject', '../src/Point', '../src/Wall', '../src/Tower'], function(SceneObject, Point, Wall, Tower){
+define(['../src/SceneObject', '../src/Point', '../src/Wall', '../src/Tower', '../src/RobotFactory'], 
+function(SceneObject, Point, Wall, Tower, RobotFactory){
   return class Builder extends SceneObject
   {
     constructor( point, scene ) {
@@ -69,6 +70,14 @@ define(['../src/SceneObject', '../src/Point', '../src/Wall', '../src/Tower'], fu
       this.addNewInstruction(
         function(){
           this.scene.sceneObjects['builders'].push(new Tower(new Point(this.point.getX(), this.point.getY()), this.scene));
+          return true;
+        }
+      );
+    }
+    buildRobotFactory() {
+      this.addNewInstruction(
+        function(){
+          this.scene.sceneObjects['builders'].push(new RobotFactory(new Point(this.point.getX(), this.point.getY()), this.scene));
           return true;
         }
       );
