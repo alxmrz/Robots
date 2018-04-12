@@ -1,7 +1,8 @@
-define(['../src/Builder', '../src/SceneGrid', '../src/Point', '../src/Wall'], function(Builder, SceneGrid, Point, Wall){
+define(['../src/Builder', '../src/SceneGrid', '../src/Point', '../src/Wall', '../src/Artist'], 
+function(Builder, SceneGrid, Point, Wall, Artist){
   class ObjectFactory {
-    getBuilder(x,y, ctx) {
-      return new Builder(this.getPoint(x, y),ctx);
+    getBuilder(x,y, scene) {
+      return new Builder(this.getPoint(x, y),scene);
     }
     
     getElementById(id) {
@@ -18,6 +19,10 @@ define(['../src/Builder', '../src/SceneGrid', '../src/Point', '../src/Wall'], fu
     
     getWall(x,y,scene) {
       return new Wall(this.getPoint(x,y), scene)
+    }
+    
+    getArtist(scene) {
+      return new Artist(scene);
     }
   }
   return ObjectFactory;

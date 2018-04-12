@@ -5,6 +5,7 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
         throw new Error('Scene is not provided!');
       }
       this.scene = scene;
+      this.artist = factory.getArtist(scene);
       this.factory = factory;
     }
     
@@ -62,7 +63,6 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
       }
    
       for(let x=this.scene.canvas.clientWidth-25;x>0;x-=25) {
-        console.log(`${this.scene.canvas.clientWidth} ${x}`)
         if(x%400 === 0 ||x === this.scene.canvas.clientWidth-25) {
           builder.buildTower();
         } else if(x === 575){
@@ -140,7 +140,6 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
     
     addBuilderToScene( x, y ) {
       this.scene.sceneObjects['builders'].push(this.factory.getBuilder( x, y, this.scene ));
-      
     }
     
     playLevelScenario(eventRegister) {
@@ -158,7 +157,7 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
             }
 
             this.scene.moveSelectedObjectToSpecialCoords(eventRegister.rightClickCoords, builder);
-        builder.showYourself();
+        this.artist.drawObject(builder);
       }
       
       

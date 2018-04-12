@@ -2,8 +2,8 @@ define(['../src/SceneObject', '../src/Point', '../src/Wall', '../src/Tower', '..
 function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
   return class Builder extends SceneObject
   {
-    constructor( point, scene ) {
-      super( point, scene );
+    constructor(point, scene ) {
+      super( point );
 
       this.fillStyle = 'black';
       this.orientation = 'North';
@@ -11,56 +11,17 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
       this.offsetX = undefined;
       this.offsetY = undefined;
       this.speed = 1;
+      this.scene = scene;
       this.width = 25;
       this.height = 25;
-      this.name = 'Строитель';
+      this.name = 'Builder';
     }
 
-    showYourself() {
-      this.showThatChosen();
-      this.printBody();
-    }
-
-    showThatChosen() {
-      if(this.chosen) {
-        this.ctx.strokeStyle = 'lime';
-        this.ctx.lineWidth=8;
-        this.ctx.strokeRect(this.point.getX(), this.point.getY(), this.width, this.height);
-      }
-      
-    }
-    
-    printBody() {
-      this.ctx.fillStyle = this.fillStyle;
-      this.ctx.fillRect( this.point.getX(), this.point.getY(), this.width, this.height );
-      //this.printOrientation();
-    }
-
-    
-    printOrientation() {
-      this.ctx.fillStyle = "red";
-      switch ( this.orientation ) {
-        case 'North':
-          this.ctx.fillRect( this.point.getX(), this.point.getY() - 2, this.width, 1 );
-          break;
-        case 'South':
-          this.ctx.fillRect( this.point.getX(), this.point.getY()+ 24, this.width, 1 );
-          break;
-        case 'West':
-          this.ctx.fillRect( this.point.getX() - 2, this.point.getY(), 1, this.height );
-          break;
-        case 'East':
-          this.ctx.fillRect( this.point.getX() + 24, this.point.getY(), 1, this.height );
-          break;
-
-      }
-      this.ctx.fillStyle = this.fillStyle;
-    }
 
     buildWall() {
       this.addNewInstruction(
         function(){
-          this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()), this.scene));
+          this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY())));
           return true;
         }
       );
@@ -69,7 +30,7 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     buildTower() {
       this.addNewInstruction(
         function(){
-          this.scene.sceneObjects['builders'].push(new Tower(new Point(this.point.getX(), this.point.getY()), this.scene));
+          this.scene.sceneObjects['builders'].push(new Tower(new Point(this.point.getX(), this.point.getY())));
           return true;
         }
       );
@@ -78,8 +39,7 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     buildGate(gateType) {
       this.addNewInstruction(
         function(gateType){
-          console.log(gateType);
-          this.scene.sceneObjects['builders'].push(new Gate(new Point(this.point.getX(), this.point.getY()), this.scene, gateType));
+          this.scene.sceneObjects['builders'].push(new Gate(new Point(this.point.getX(), this.point.getY()), gateType));
           return true;
         },
         gateType   
@@ -89,7 +49,7 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     buildRobotFactory() {
       this.addNewInstruction(
         function(){
-          this.scene.sceneObjects['builders'].push(new RobotFactory(new Point(this.point.getX(), this.point.getY()), this.scene));
+          this.scene.sceneObjects['builders'].push(new RobotFactory(new Point(this.point.getX(), this.point.getY())));
           return true;
         }
       );
