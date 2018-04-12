@@ -22,10 +22,19 @@ define(function(){
     }
     
     showYourself() {
-      throw new Error("Call of abstract method showYourself");
+      this.showThatChosen();
+      this.printBody();
     }
     
     showThatChosen() {
+      if(this.chosen) {
+        this.ctx.strokeStyle = 'lime';
+        this.ctx.lineWidth=8;
+        this.ctx.strokeRect(this.point.getX(), this.point.getY(), this.width, this.height);
+      }
+      
+    }
+    printBody() {
       throw new Error("Call of abstract method showThatChosen");
     }
   }

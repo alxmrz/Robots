@@ -8,17 +8,9 @@ define(['../src/SceneObject'], function(SceneObject){
       this.name = 'Стена';
     }
 
-    showYourself() {
-      this.setBlueColorIfObjectChosen();
+    printBody() {
+      this.ctx.fillStyle = this.fillStyle;
       this.ctx.fillRect( this.point.getX(), this.point.getY(), this.width, this.height );
-    }
-
-    setBlueColorIfObjectChosen() {
-      if(this.chosen) {
-        this.ctx.fillStyle = 'yellow';
-      } else {
-        this.ctx.fillStyle = this.fillStyle;
-      }
     }
 
   }

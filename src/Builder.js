@@ -1,10 +1,10 @@
-define(['../src/SceneObject', '../src/Point', '../src/Wall'], function(SceneObject, Point, Wall){
+define(['../src/SceneObject', '../src/Point', '../src/Wall', '../src/Tower'], function(SceneObject, Point, Wall, Tower){
   return class Builder extends SceneObject
   {
     constructor( point, scene ) {
       super( point, scene );
 
-      this.fillStyle = 'green';
+      this.fillStyle = 'black';
       this.orientation = 'North';
       this.instructions = [];
       this.offsetX = undefined;
@@ -16,23 +16,59 @@ define(['../src/SceneObject', '../src/Point', '../src/Wall'], function(SceneObje
     }
 
     showYourself() {
-      this.setBlueColorIfObjectChosen();
-      this.ctx.fillRect( this.point.getX(), this.point.getY(), this.width, this.height );
-      this.printOrientation();
+      this.showThatChosen();
+      this.printBody();
     }
 
-    setBlueColorIfObjectChosen() {
+    showThatChosen() {
       if(this.chosen) {
-        this.ctx.fillStyle = 'blue';
-      } else {
-        this.ctx.fillStyle = this.fillStyle;
+        this.ctx.strokeStyle = 'lime';
+        this.ctx.lineWidth=8;
+        this.ctx.strokeRect(this.point.getX(), this.point.getY(), this.width, this.height);
       }
+      
     }
     
+    printBody() {
+      this.ctx.fillStyle = this.fillStyle;
+      this.ctx.fillRect( this.point.getX(), this.point.getY(), this.width, this.height );
+      //this.printOrientation();
+    }
+
+    
+    printOrientation() {
+      this.ctx.fillStyle = "red";
+      switch ( this.orientation ) {
+        case 'North':
+          this.ctx.fillRect( this.point.getX(), this.point.getY() - 2, this.width, 1 );
+          break;
+        case 'South':
+          this.ctx.fillRect( this.point.getX(), this.point.getY()+ 24, this.width, 1 );
+          break;
+        case 'West':
+          this.ctx.fillRect( this.point.getX() - 2, this.point.getY(), 1, this.height );
+          break;
+        case 'East':
+          this.ctx.fillRect( this.point.getX() + 24, this.point.getY(), 1, this.height );
+          break;
+
+      }
+      this.ctx.fillStyle = this.fillStyle;
+    }
+
     buildWall() {
       this.addNewInstruction(
         function(){
           this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()), this.scene));
+          return true;
+        }
+      );
+    }
+    
+    buildTower() {
+      this.addNewInstruction(
+        function(){
+          this.scene.sceneObjects['builders'].push(new Tower(new Point(this.point.getX(), this.point.getY()), this.scene));
           return true;
         }
       );
@@ -125,26 +161,6 @@ define(['../src/SceneObject', '../src/Point', '../src/Wall'], function(SceneObje
           this.instructions.shift();
         }
       }
-    }
-    
-    printOrientation() {
-      this.ctx.fillStyle = "red";
-      switch ( this.orientation ) {
-        case 'North':
-          this.ctx.fillRect( this.point.getX(), this.point.getY() - 2, this.width, 1 );
-          break;
-        case 'South':
-          this.ctx.fillRect( this.point.getX(), this.point.getY()+ 24, this.width, 1 );
-          break;
-        case 'West':
-          this.ctx.fillRect( this.point.getX() - 2, this.point.getY(), 1, this.height );
-          break;
-        case 'East':
-          this.ctx.fillRect( this.point.getX() + 24, this.point.getY(), 1, this.height );
-          break;
-
-      }
-
     }
 
     setOrientation( orientation ) {
