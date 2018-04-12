@@ -1,7 +1,7 @@
 define(['../../src/Builder', '../../src/Point', '../../src/Scene'], function(Builder, Point, Scene){
    QUnit.module("unit/BuilderTest");
 
-  QUnit.test( "Check instruction list after query some actions", function( assert ) {
+  /*QUnit.test( "Check instruction list after query some actions", function( assert ) {
     let builder = new Builder(new Point(20,20), {});
     var scene = sinon.createStubInstance(Scene);
     builder.buildWall(scene);
@@ -18,6 +18,6 @@ define(['../../src/Builder', '../../src/Point', '../../src/Scene'], function(Bui
     
     
   });
-  
+  */
   
 });

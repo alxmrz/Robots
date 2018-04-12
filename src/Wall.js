@@ -1,17 +1,11 @@
-define(function(){
-  class Wall {
-    constructor(point, ctx) {
-      this.point = point;
-      this.chosen = false;
+define(['../src/SceneObject'], function(SceneObject){
+  class Wall extends SceneObject {
+    constructor(point, scene) {
+      super(point, scene)
       this.width = 25;
-      this.ctx = ctx;
       this.height = 25;
       this.fillStyle = 'brown'
       this.name = 'Стена';
-    }
-
-    getCoords() {
-      return this.point;
     }
 
     showYourself() {

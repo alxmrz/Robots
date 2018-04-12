@@ -1,19 +1,17 @@
-define(['../src/Point', '../src/Wall'], function(Point, Wall){
-  return class Builder
+define(['../src/SceneObject', '../src/Point', '../src/Wall'], function(SceneObject, Point, Wall){
+  return class Builder extends SceneObject
   {
     constructor( point, scene ) {
-      this.point = point;
+      super( point, scene );
+
       this.fillStyle = 'green';
       this.orientation = 'North';
       this.instructions = [];
-      this.scene = scene;
-      this.ctx = scene.ctx;
       this.offsetX = undefined;
       this.offsetY = undefined;
       this.speed = 1;
       this.width = 25;
       this.height = 25;
-      this.chosen = false;
       this.name = 'Строитель';
     }
 
@@ -34,7 +32,7 @@ define(['../src/Point', '../src/Wall'], function(Point, Wall){
     buildWall() {
       this.addNewInstruction(
         function(){
-          this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()), this.ctx));
+          this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()), this.scene));
           return true;
         }
       );
@@ -154,12 +152,6 @@ define(['../src/Point', '../src/Wall'], function(Point, Wall){
     }
     getOrientation( orientation ) {
       this.orientation = orientation;
-    }
-    getCoords() {
-      return this.point;
-    }
-    setCoords(point) {
-      this.point = point;
     }
   }
 });

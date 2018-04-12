@@ -108,7 +108,7 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
       
       //Следующий код должен быть в "Движке"
       for(let builder of builders) {
-            let localCoords = builder.getCoords();
+            let localCoords = builder.getPoint();
             this.scene.selectObjectIfClicked(eventRegister.clickCoords, localCoords, builder);
             if(builder.chosen && eventRegister.rightClickCoords !== undefined) {
               this.scene.setNewCoordsToSelectedObject(eventRegister.rightClickCoords, builder);

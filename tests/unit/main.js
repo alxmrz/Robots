@@ -6,7 +6,8 @@
     "PointTest",
     "WallTest",
     "LevelTest",
-    "BuilderTest"
+    "BuilderTest",
+    "SceneObjectTest"
   ], function(){
     QUnit.start();
   });
