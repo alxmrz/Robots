@@ -2,65 +2,29 @@ define(['../src/SceneObject', '../src/Point', '../src/Wall', '../src/Tower', '..
 function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
   return class Builder extends SceneObject
   {
-    constructor( point, scene ) {
-      super( point, scene );
+    constructor(point, scene ) {
+      super( point );
 
       this.fillStyle = 'black';
-      this.orientation = 'North';
+      this.orientation = 'UP';
+      this.currentSprite = 0;
       this.instructions = [];
+      this.seconds;
+      this.nextSecond;
       this.offsetX = undefined;
       this.offsetY = undefined;
       this.speed = 1;
-      this.width = 25;
-      this.height = 25;
-      this.name = 'Строитель';
+      this.scene = scene;
+      this.width = 50;
+      this.height = 50;
+      this.name = 'Builder';
     }
 
-    showYourself() {
-      this.showThatChosen();
-      this.printBody();
-    }
-
-    showThatChosen() {
-      if(this.chosen) {
-        this.ctx.strokeStyle = 'lime';
-        this.ctx.lineWidth=8;
-        this.ctx.strokeRect(this.point.getX(), this.point.getY(), this.width, this.height);
-      }
-      
-    }
-    
-    printBody() {
-      this.ctx.fillStyle = this.fillStyle;
-      this.ctx.fillRect( this.point.getX(), this.point.getY(), this.width, this.height );
-      //this.printOrientation();
-    }
-
-    
-    printOrientation() {
-      this.ctx.fillStyle = "red";
-      switch ( this.orientation ) {
-        case 'North':
-          this.ctx.fillRect( this.point.getX(), this.point.getY() - 2, this.width, 1 );
-          break;
-        case 'South':
-          this.ctx.fillRect( this.point.getX(), this.point.getY()+ 24, this.width, 1 );
-          break;
-        case 'West':
-          this.ctx.fillRect( this.point.getX() - 2, this.point.getY(), 1, this.height );
-          break;
-        case 'East':
-          this.ctx.fillRect( this.point.getX() + 24, this.point.getY(), 1, this.height );
-          break;
-
-      }
-      this.ctx.fillStyle = this.fillStyle;
-    }
 
     buildWall() {
       this.addNewInstruction(
         function(){
-          this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()), this.scene));
+          this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY())));
           return true;
         }
       );
@@ -69,7 +33,7 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     buildTower() {
       this.addNewInstruction(
         function(){
-          this.scene.sceneObjects['builders'].push(new Tower(new Point(this.point.getX(), this.point.getY()), this.scene));
+          this.scene.sceneObjects['builders'].push(new Tower(new Point(this.point.getX(), this.point.getY())));
           return true;
         }
       );
@@ -78,8 +42,7 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     buildGate(gateType) {
       this.addNewInstruction(
         function(gateType){
-          console.log(gateType);
-          this.scene.sceneObjects['builders'].push(new Gate(new Point(this.point.getX(), this.point.getY()), this.scene, gateType));
+          this.scene.sceneObjects['builders'].push(new Gate(new Point(this.point.getX(), this.point.getY()), gateType));
           return true;
         },
         gateType   
@@ -89,7 +52,7 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     buildRobotFactory() {
       this.addNewInstruction(
         function(){
-          this.scene.sceneObjects['builders'].push(new RobotFactory(new Point(this.point.getX(), this.point.getY()), this.scene));
+          this.scene.sceneObjects['builders'].push(new RobotFactory(new Point(this.point.getX(), this.point.getY())));
           return true;
         }
       );
@@ -98,14 +61,28 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     moveRight(offsetX) {
       this.addNewInstruction(
         function(offset){
+          let date = new Date();
+          this.setOrientation('RIGHT');
           if(this.offsetX === undefined) {
             this.offsetX = this.point.getX() + offsetX;
           }
           
           if(this.point.getX() < this.offsetX) {
             this.point.setX(this.point.getX() + this.speed);
+              if(this.seconds !== date.getSeconds()) {
+                this.nextSecond = date.getSeconds();
+                this.seconds = date.getSeconds();
+                if(this.currentSprite <4) {
+                this.currentSprite +=1;
+              } else {
+                this.currentSprite =1;
+              }
+            } 
+            
+            
             return false;
           } 
+
           this.offsetX = undefined;
           return true;
         },
@@ -115,7 +92,7 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     moveLeft(offsetX) {
       this.addNewInstruction(
         function(offset){
-
+          this.setOrientation('LEFT');
           if(this.offsetX === undefined) {
             
             this.offsetX = this.point.getX() - offset;
@@ -124,9 +101,14 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
           
           if(this.point.getX() > this.offsetX) {
             this.point.setX(this.point.getX() - this.speed);
+            if(this.currentSprite <4) {
+              this.currentSprite +=1;
+            } else {
+              this.currentSprite =1;
+            }
             return false;
           } 
-          
+          this.currentSprite =0;
           this.offsetX = undefined;
           return true;
         },
@@ -136,13 +118,20 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     moveDown(offsetY) {
       this.addNewInstruction(
         function(offsetY){
+          this.setOrientation('DOWN');
           if(this.offsetY === undefined) {
             this.offsetY = this.point.getY() + offsetY;
           }
           if(this.point.getY() < this.offsetY) {
             this.point.setY(this.point.getY() + this.speed);
+            if(this.currentSprite <4) {
+              this.currentSprite +=1;
+            } else {
+              this.currentSprite =1;
+            }
             return false;
           } 
+          this.currentSprite =0;
           this.offsetY = undefined;
           return true;
         },
@@ -152,14 +141,21 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     moveUp(offsetY) {
       this.addNewInstruction(
         function(offsetY){
+          this.setOrientation('UP');
           if(this.offsetY === undefined) {
             this.offsetY = this.point.getY() - offsetY;
           }
           
           if(this.point.getY() > this.offsetY) {
             this.point.setY(this.point.getY() - this.speed);
+            if(this.currentSprite <4) {
+              this.currentSprite +=1;
+            } else {
+              this.currentSprite =1;
+            }
             return false;
           } 
+          this.currentSprite =0;
           this.offsetY = undefined;
           return true;
         },
@@ -180,6 +176,9 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
         
         if(func()) {
           this.instructions.shift();
+          if(this.instructions.lenght == 0) {
+            this.currentSprite = 0;
+          }
         }
       }
     }
@@ -187,8 +186,9 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     setOrientation( orientation ) {
       this.orientation = orientation;
     }
+    
     getOrientation( orientation ) {
-      this.orientation = orientation;
+      return this.orientation;
     }
   }
 });

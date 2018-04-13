@@ -5,6 +5,7 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
         throw new Error('Scene is not provided!');
       }
       this.scene = scene;
+      this.artist = factory.getArtist(scene);
       this.factory = factory;
     }
     
@@ -26,35 +27,55 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
 
     }
     buildWalls(builder) {
-      builder.speed = 5;
+      builder.speed = 2.5;
 
       for(let x=0;x<this.scene.canvas.clientWidth-25;x+=25) {
         if(x%400 === 0) {
           builder.buildTower();
+          x+=25;
+          builder.moveRight(50);
+          continue
         } else if(x === 500){
           builder.buildGate();
           x+=50;
           builder.moveRight(75);
           continue;
-        } else {
+        } else if(x === 1025) {
+          builder.buildTower();
+          builder.moveRight(25);
+          builder.moveDown(50);
+          x+=25;
+          continue;
+        }else {
           builder.buildWall();
         }
         
         builder.moveRight(25);
       }
 
-      for(let y=0;y<this.scene.canvas.clientHeight-25;y+=25) {
+      for(let y=50;y<this.scene.canvas.clientHeight-25;y+=25) {
         
-        if(y%400 === 0) {
-          
+        if(y%400 === 0 && y!==0) {
+          builder.moveLeft(25);
           builder.buildTower();
-        } else if(y === 225) {
+          builder.moveRight(25);
+          y+=25;
+          builder.moveDown(50);
+          continue;
+        } else if(y===575) {
+          builder.moveLeft(25);
+          builder.buildTower();
+          builder.moveDown(25);
+          builder.moveLeft(25);
+          y+=25;
+          continue;
+        }else if(y === 225) {
           builder.buildGate('vertical');
           y+=50;
           builder.moveDown(75);
           continue;
         } else {
-          
+         
           builder.buildWall();
         }
 
@@ -62,27 +83,49 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
       }
    
       for(let x=this.scene.canvas.clientWidth-25;x>0;x-=25) {
-        console.log(`${this.scene.canvas.clientWidth} ${x}`)
-        if(x%400 === 0 ||x === this.scene.canvas.clientWidth-25) {
+        if(x%400 === 0 ) {
+          builder.moveUp(25);
+          builder.moveLeft(25);
           builder.buildTower();
-        } else if(x === 575){
+          builder.moveDown(25);
+          builder.moveLeft(25);
+          x-=50;
+          continue;
+        } else if(x === 25) {
+          builder.moveUp(25);
+          builder.moveLeft(25);
+          builder.buildTower();
+          x-=25;
+          continue;
+        }else if(x === 575){
           builder.buildWall();
           builder.moveLeft(75);
           builder.buildGate();
           builder.moveLeft(25);
           x-=75;
           continue;
-        } else {
+        } else if(x===25) {
+          builder.moveLeft(25);
+          builder.buildTower();
+          builder.moveUp(25);
+          x-=25;
+          continue;
+        }else if(x!==0) {
           builder.buildWall();
         }
         builder.moveLeft(25);
       }
       
-      for(let y=this.scene.canvas.clientHeight-25;y>25;y-=25) {
-        if(y%400 === 0 || y === 600) {
-          
+      for(let y=this.scene.canvas.clientHeight-50;y>50;y-=25) {
+        if(y%400 === 0) {
+          builder.moveUp(25);
           builder.buildTower();
-        } else if(y === 300) {
+        } else if(y===575){
+           builder.buildTower();
+           builder.moveUp(25);
+           y-=25;
+           continue;
+        }else if(y === 300) {
           builder.buildWall();
           builder.moveUp(75);
           builder.buildGate('vertical');
@@ -108,10 +151,10 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
       this.buildFactoriesBlock(builder);
       
 
-      builder.moveDown(250);
+      builder.moveDown(150);
       this.buildFactoriesBlock(builder);
       builder.moveRight(600);
-      builder.moveUp(75);
+      builder.moveUp(125);
       this.buildFactoriesBlock(builder);
 
       builder.moveUp(400);
@@ -121,18 +164,16 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
     }
     buildFactoriesBlock(builder) {
       builder.buildRobotFactory();
-      builder.moveRight(75);
+      builder.moveRight(125);
       builder.buildRobotFactory();
-      builder.moveRight(75);
-      builder.buildRobotFactory();
+
       
-      builder.moveDown(75);
+      builder.moveDown(125);
  
       builder.buildRobotFactory();
-      builder.moveLeft(75);
+      builder.moveLeft(125);
       builder.buildRobotFactory();
-      builder.moveLeft(75);
-      builder.buildRobotFactory();
+
 
       
     }
@@ -140,7 +181,6 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
     
     addBuilderToScene( x, y ) {
       this.scene.sceneObjects['builders'].push(this.factory.getBuilder( x, y, this.scene ));
-      
     }
     
     playLevelScenario(eventRegister) {
@@ -158,7 +198,7 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
             }
 
             this.scene.moveSelectedObjectToSpecialCoords(eventRegister.rightClickCoords, builder);
-        builder.showYourself();
+        this.artist.drawObject(builder);
       }
       
       

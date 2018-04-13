@@ -47,7 +47,7 @@ function (SceneGrid, Builder, ObjectFactory, Point) {
 
     setLogObjectInfo(object) {
       let objectInfo = document.getElementById("objectInfo");
-      objectInfo.innerHTML = JSON.stringify(object.point, null, ' ');
+      objectInfo.innerHTML = JSON.stringify(object, null, ' ');
     }
 
     setNewCoordsToSelectedObject(newCoords, object) {

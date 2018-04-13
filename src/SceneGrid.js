@@ -3,6 +3,7 @@ define(function(){
   {
     printGrid(){
       this.getCanvasGrid();
+      this.printGrass();
       this.printHorizontalLines();
       this.printVerticalLines();
     }
@@ -12,6 +13,12 @@ define(function(){
       this.ctx = this.canvas.getContext("2d");
     }
 
+    printGrass() {
+      var canvasWidth = this.canvas.clientWidth;
+      var canvasHeight = this.canvas.clientHeight;
+      this.ctx.fillStyle="green";
+      this.ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
     printHorizontalLines() {
       var canvasWidth = this.canvas.clientWidth;
       var canvasHeight = this.canvas.clientHeight;
