@@ -27,7 +27,7 @@ define(['../src/Scene', '../src/ObjectFactory', '../src/Builder'], function(Scen
 
     }
     buildWalls(builder) {
-      builder.speed = 5;
+      builder.speed = 2.5;
 
       for(let x=0;x<this.scene.canvas.clientWidth-25;x+=25) {
         if(x%400 === 0) {

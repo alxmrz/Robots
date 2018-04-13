@@ -3,21 +3,27 @@ define(['../src/Builder'], function(){
     constructor(scene) {
       this.scene = scene;
       this.ctx = scene.ctx;
+      this.builderSprites = {
+        'RIGHT': [[175,8],[175,70], [175,130], [175, 175], [175, 225]],
+        'LEFT': [[175,8],[175,70], [175,130], [175, 175], [175, 225]],
+        'UP': [[175,8],[175,70], [175,130], [175, 175], [175, 225]],
+        'DOWN': [[310,8],[310,70], [310,130], [310, 175], [310, 225]]
+      };
     }
     
     drawObject(object) {
       switch(object.getName()) {
         case 'Builder':
-          this.drawBuilderWithPrimitives(object);
+          this.drawBuilderWithSprites(object);
           break;
         case 'Tower':
           this.drawTowerWithSprites(object);
           break;
         case 'Wall':
-          this.drawWallWithPrimitives(object);
+          this.drawWallWithSprites(object);
           break;
         case 'Gate':
-          this.drawGateWithPrimitives(object);
+          this.drawGateWithSprites(object);
           break;
         case 'RobotFactory':
           this.drawRobotFactoryWithSprites(object);
@@ -29,6 +35,14 @@ define(['../src/Builder'], function(){
       this.showThatChosen(object);
       this.ctx.fillStyle = object.fillStyle;
       this.ctx.fillRect( object.point.getX(), object.point.getY(), object.width, object.height );
+    }
+    
+    drawBuilderWithSprites(object) {
+      
+      this.showThatChosen(object);
+      let spriteCoords = this.builderSprites[object.getOrientation()][Math.floor(object.currentSprite)];
+      this.ctx.drawImage(document.getElementById('unit'),
+                spriteCoords[0], spriteCoords[1], 30, 45, object.point.getX(), object.point.getY(), object.width, object.height);
     }
     
     drawTowerWithPrimitives(object) {
@@ -50,6 +64,7 @@ define(['../src/Builder'], function(){
     }
     
     drawTowerWithSprites(object) {
+      this.showThatChosen(object);
       this.ctx.drawImage(document.getElementById('source'),
                 470, 0, 60, 70, object.point.getX(), object.point.getY(), object.width, object.height);
     }
@@ -68,12 +83,26 @@ define(['../src/Builder'], function(){
       this.ctx.fillRect( object.point.getX(), object.point.getY(), object.width, object.height );
     }
     
+    drawWallWithSprites(object) {
+      this.showThatChosen(object);
+      this.ctx.drawImage(document.getElementById('wall'),
+                0, 30, 30, 30, object.point.getX(), object.point.getY(), object.width, object.height);
+    }
+    
     drawGateWithPrimitives(object) {
+      this.showThatChosen(object);
       this.ctx.fillStyle = object.fillStyle;
       this.ctx.fillRect( object.point.getX(), object.point.getY(), object.width, object.height );
     }
     
+    drawGateWithSprites(object) {
+      this.showThatChosen(object);
+      this.ctx.drawImage(document.getElementById('gate'),
+                0, 0, 60, 80, object.point.getX(), object.point.getY(), object.width, object.height);
+    }
+    
     drawRobotFactoryWithPrimitives(object) {
+      this.showThatChosen(object);
       this.ctx.fillStyle = object.fillStyle;
       this.ctx.fillRect( object.point.getX(), object.point.getY(), object.width, object.height );
     }

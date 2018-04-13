@@ -6,14 +6,17 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
       super( point );
 
       this.fillStyle = 'black';
-      this.orientation = 'North';
+      this.orientation = 'UP';
+      this.currentSprite = 0;
       this.instructions = [];
+      this.seconds;
+      this.nextSecond;
       this.offsetX = undefined;
       this.offsetY = undefined;
       this.speed = 1;
       this.scene = scene;
-      this.width = 25;
-      this.height = 25;
+      this.width = 50;
+      this.height = 50;
       this.name = 'Builder';
     }
 
@@ -58,14 +61,28 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     moveRight(offsetX) {
       this.addNewInstruction(
         function(offset){
+          let date = new Date();
+          this.setOrientation('RIGHT');
           if(this.offsetX === undefined) {
             this.offsetX = this.point.getX() + offsetX;
           }
           
           if(this.point.getX() < this.offsetX) {
             this.point.setX(this.point.getX() + this.speed);
+              if(this.seconds !== date.getSeconds()) {
+                this.nextSecond = date.getSeconds();
+                this.seconds = date.getSeconds();
+                if(this.currentSprite <4) {
+                this.currentSprite +=1;
+              } else {
+                this.currentSprite =1;
+              }
+            } 
+            
+            
             return false;
           } 
+
           this.offsetX = undefined;
           return true;
         },
@@ -75,7 +92,7 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     moveLeft(offsetX) {
       this.addNewInstruction(
         function(offset){
-
+          this.setOrientation('LEFT');
           if(this.offsetX === undefined) {
             
             this.offsetX = this.point.getX() - offset;
@@ -84,9 +101,14 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
           
           if(this.point.getX() > this.offsetX) {
             this.point.setX(this.point.getX() - this.speed);
+            if(this.currentSprite <4) {
+              this.currentSprite +=1;
+            } else {
+              this.currentSprite =1;
+            }
             return false;
           } 
-          
+          this.currentSprite =0;
           this.offsetX = undefined;
           return true;
         },
@@ -96,13 +118,20 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     moveDown(offsetY) {
       this.addNewInstruction(
         function(offsetY){
+          this.setOrientation('DOWN');
           if(this.offsetY === undefined) {
             this.offsetY = this.point.getY() + offsetY;
           }
           if(this.point.getY() < this.offsetY) {
             this.point.setY(this.point.getY() + this.speed);
+            if(this.currentSprite <4) {
+              this.currentSprite +=1;
+            } else {
+              this.currentSprite =1;
+            }
             return false;
           } 
+          this.currentSprite =0;
           this.offsetY = undefined;
           return true;
         },
@@ -112,14 +141,21 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     moveUp(offsetY) {
       this.addNewInstruction(
         function(offsetY){
+          this.setOrientation('UP');
           if(this.offsetY === undefined) {
             this.offsetY = this.point.getY() - offsetY;
           }
           
           if(this.point.getY() > this.offsetY) {
             this.point.setY(this.point.getY() - this.speed);
+            if(this.currentSprite <4) {
+              this.currentSprite +=1;
+            } else {
+              this.currentSprite =1;
+            }
             return false;
           } 
+          this.currentSprite =0;
           this.offsetY = undefined;
           return true;
         },
@@ -140,6 +176,9 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
         
         if(func()) {
           this.instructions.shift();
+          if(this.instructions.lenght == 0) {
+            this.currentSprite = 0;
+          }
         }
       }
     }
@@ -147,8 +186,9 @@ function(SceneObject, Point, Wall, Tower, RobotFactory, Gate){
     setOrientation( orientation ) {
       this.orientation = orientation;
     }
+    
     getOrientation( orientation ) {
-      this.orientation = orientation;
+      return this.orientation;
     }
   }
 });
