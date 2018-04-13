@@ -46,8 +46,20 @@ function (SceneGrid, Builder, ObjectFactory, Point) {
     }
 
     setLogObjectInfo(object) {
+      const getCircularReplacer = () => {
+        const seen = new WeakSet;
+        return (key, value) => {
+          if (typeof value === "object" && value !== null) {
+            if (seen.has(value)) {
+              return;
+            }
+            seen.add(value);
+          }
+          return value;
+        };
+      };
       let objectInfo = document.getElementById("objectInfo");
-      objectInfo.innerHTML = JSON.stringify(object, null, ' ');
+      objectInfo.innerHTML = JSON.stringify(object, getCircularReplacer(), ' ');
     }
 
     setNewCoordsToSelectedObject(newCoords, object) {
