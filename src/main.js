@@ -1,6 +1,6 @@
-import Application from "./Application";
-import Scene from "./Scene";
-import ObjectFactory from "./ObjectFactory";
-import EventRegister from "./EventRegister";
+import Vue from 'vue';
+import App from './components/App.vue'
 
-( new Application( new Scene( new ObjectFactory ), new EventRegister() ) ).main();
+new Vue({
+    render: h => h(App)
+  }).$mount('#app')
