@@ -8,8 +8,15 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js' // 'vue/dist/vue.common.js' для webpack 1
-    }
+      'vue$': 'vue/dist/vue.esm.js', // 'vue/dist/vue.common.js' для webpack 1
+    },
+    extensions: ['', 'js', 'jsx'],
+    modules: [
+      'node_modules',
+      'bower_components',
+      'shared',
+      '/shared/vendor/modules',
+    ],
   },
   module: {
     rules: [
