@@ -2,6 +2,7 @@ import Builder from './Builder';
 import SceneGrid from './SceneGrid';
 import Point from './Point';
 import Artist from './Artist';
+import Wall from "@app/Wall";
 
 
 export default class ObjectFactory {
