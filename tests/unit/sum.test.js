@@ -1,5 +1,5 @@
-import Scene from '../../src/Scene'
-import Application from '../../src/Application'
+import Scene from '@app/Scene'
+import Application from '@app/Application'
 
 jest.mock('../../src/Scene');
 

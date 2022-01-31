@@ -14,6 +14,7 @@
     "@babel/preset-env": "^7.16.11",
     "babel-loader": "^8.2.2",
     "jest": "^27.4.7",
+    "sinon": "^13.0.0",
     "vue-loader": "^15.9.6",
     "vue-template-compiler": "^2.6.12",
     "webpack": "^5.36.2",
@@ -25,13 +26,12 @@
       "jsx"
     ],
     "moduleDirectories": [
-      "node_modules",
-      "bower_components",
-      "shared"
+      "node_modules"
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/mocks/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
+      "^@app(.*)$": "<rootDir>/src$1"
     }
   }
 }
