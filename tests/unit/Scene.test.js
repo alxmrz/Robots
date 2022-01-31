@@ -9,7 +9,7 @@ test( "Setting Object and empty builders array after creating object", function(
 
     expect(factory).toStrictEqual(scene.getFactory());
     expect({'builders' : []}).toStrictEqual(scene.getSceneObjects());
-    expect({type: 'canvas'}.type).toStrictEqual(scene.getCanvas().type);
+    expect( 'canvas').toStrictEqual(scene.getCanvas().type);
     expect({type: '2d'}).toStrictEqual( scene.getContext());
     expect(scene.getSceneGrid()).toBeInstanceOf(SceneGrid);
 });
