@@ -8,6 +8,5 @@ export default class Wall extends SceneObject {
     this.fillStyle = 'brown'
     this.name = 'Wall';
   }
-
 }
 
