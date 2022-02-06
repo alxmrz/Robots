@@ -39,7 +39,7 @@ import EventRegister from "../EventRegister";
 
 export default {
     mounted: function() {
-        this.game = (new Application( new Scene( new ObjectFactory ), new EventRegister() ) )
+        this.game = (new Application( new Scene( new ObjectFactory ), new EventRegister(), window ) )
         this.game.main();
     }
 }
