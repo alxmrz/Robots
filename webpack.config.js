@@ -12,7 +12,7 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
       '@app': path.resolve(__dirname,'src')
     },
-    extensions: ['', 'js', 'jsx'],
+    extensions: ['', '.js', '.jsx'],
     modules: [
       'node_modules',
       'bower_components',
