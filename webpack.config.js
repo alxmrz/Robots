@@ -41,5 +41,10 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin()
-  ]
+  ],
+  watchOptions: {
+    aggregateTimeout: 200,
+    poll: 1000,
+    ignored: '/node_modules/'
+  },
 };

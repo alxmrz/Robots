@@ -1,18 +1,31 @@
 import Scene from './Scene';
 import ObjectFactory from './ObjectFactory';
 import Builder from './Builder';
+import Point from "@app/Point";
 
-export default class Level {
-  constructor( scene, factory ) {
-    if ( !( scene instanceof Scene ) ) {
+export default class Level extends Phaser.Scene{
+  constructor() {
+    super();
+    /*if ( !( scene instanceof Scene ) ) {
       throw new Error( 'Scene is not provided!' );
-    }
-    this.scene = scene;
-    this.artist = factory.getArtist( scene );
-    this.factory = factory;
+    }*/
+    this.sceneObjects = {
+      builders: []
+    };
+   // this.artist = factory.getArtist( scene );
+    this.factory = new ObjectFactory();
   }
-
-  init() {
+  preload() {
+    this.canvas = this.sys.game.canvas;
+    this.add.grid(0, 0, this.canvas.clientWidth,  this.canvas.clientHeight, 25, 25).setOrigin(0, 0).setOutlineStyle(0x000000);
+  };
+  create() {
+    this._init();
+  }
+  update(time, delta) {
+    this.playLevelScenario();
+  }
+  _init() {
     this.addBuilderToScene( 0, 0 );
     this.addBuilderToScene( 25, 75 );
     this.addBuilderToScene( 25, 125 );
@@ -25,14 +38,11 @@ export default class Level {
   setLevelInstructions( builders ) {
     this.buildWalls( builders[0] );
     this.buildFactories( builders[1] );
-
-
-
   }
   buildWalls( builder ) {
     builder.speed = 2.5;
 
-    for ( let x = 0; x < this.scene.canvas.clientWidth - 25; x += 25 ) {
+    for ( let x = 0; x < this.canvas.clientWidth - 25; x += 25 ) {
       if ( x % 400 === 0 ) {
         builder.buildTower();
         x += 25;
@@ -43,7 +53,7 @@ export default class Level {
         x += 50;
         builder.moveRight( 75 );
         continue;
-      } else if ( x === 1025 ) {
+      } else if ( x === this.canvas.clientWidth - 50 ) {
         builder.buildTower();
         builder.moveRight( 25 );
         builder.moveDown( 50 );
@@ -56,7 +66,7 @@ export default class Level {
       builder.moveRight( 25 );
     }
 
-    for ( let y = 50; y < this.scene.canvas.clientHeight - 25; y += 25 ) {
+    for ( let y = 50; y < this.canvas.clientHeight - 25; y += 25 ) {
 
       if ( y % 400 === 0 && y !== 0 ) {
         builder.moveLeft( 25 );
@@ -85,7 +95,7 @@ export default class Level {
       builder.moveDown( 25 );
     }
 
-    for ( let x = this.scene.canvas.clientWidth - 25; x > 0; x -= 25 ) {
+    for ( let x = this.canvas.clientWidth - 25; x > 0; x -= 25 ) {
       if ( x % 400 === 0 ) {
         builder.moveUp( 25 );
         builder.moveLeft( 25 );
@@ -99,6 +109,8 @@ export default class Level {
         builder.moveLeft( 25 );
         builder.buildTower();
         x -= 25;
+        builder.moveUp( 25 );
+
         continue;
       } else if ( x === 575 ) {
         builder.buildWall();
@@ -107,28 +119,16 @@ export default class Level {
         builder.moveLeft( 25 );
         x -= 75;
         continue;
-      } else if ( x === 25 ) {
-        builder.moveLeft( 25 );
-        builder.buildTower();
-        builder.moveUp( 25 );
-        x -= 25;
-        continue;
       } else if ( x !== 0 ) {
         builder.buildWall();
       }
       builder.moveLeft( 25 );
     }
 
-    for ( let y = this.scene.canvas.clientHeight - 50; y > 50; y -= 25 ) {
+    for ( let y = this.canvas.clientHeight - 50; y > 50; y -= 25 ) {
       if ( y % 400 === 0 ) {
-        builder.moveUp( 25 );
         builder.buildTower();
-      } else if ( y === 575 ) {
-        builder.buildTower();
-        builder.moveUp( 25 );
-        y -= 25;
-        continue;
-      } else if ( y === 300 ) {
+      }  else if ( y === 300 ) {
         builder.buildWall();
         builder.moveUp( 75 );
         builder.buildGate( 'vertical' );
@@ -143,8 +143,8 @@ export default class Level {
 
       builder.moveUp( 25 );
     }
-    builder.buildWall();
     builder.moveRight( 50 );
+    builder.moveDown(25 );
   }
 
   buildFactories( builder ) {
@@ -182,17 +182,17 @@ export default class Level {
   }
 
   addBuilderToScene( x, y ) {
-    this.scene.sceneObjects['builders'].push( this.factory.getBuilder( x, y, this.scene ) );
+    this.sceneObjects['builders'].push( this.factory.getBuilder( x, y, this ) );
   }
 
-  playLevelScenario( eventRegister ) {
+  playLevelScenario( ) {
     let builders = this.getBuilders();
 
     builders[0].runInstructions();
     builders[1].runInstructions();
 
     //Следующий код должен быть в "Движке"
-    for ( let builder of builders ) {
+    /*for ( let builder of builders ) {
       let localCoords = builder.getPoint();
       this.scene.selectObjectIfClicked( eventRegister.clickCoords, localCoords, builder );
       if ( builder.chosen && eventRegister.rightClickCoords !== undefined ) {
@@ -201,13 +201,13 @@ export default class Level {
 
       this.scene.moveSelectedObjectToSpecialCoords( eventRegister.rightClickCoords, builder );
       this.artist.drawObject( builder );
-    }
+    }*/
 
 
   }
 
   getBuilders() {
-    return this.scene.sceneObjects['builders'];
+    return this.sceneObjects['builders'];
   }
 
 }
