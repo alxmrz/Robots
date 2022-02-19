@@ -1,4 +1,3 @@
-import SceneObject from './SceneObject';
 import Point from './Point';
 import Wall from './Wall';
 import Tower from './Tower';
@@ -173,12 +172,12 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
         }
     }
 
-    setOrientation(orientation) {
-        this.orientation = orientation;
-    }
-
     getOrientation(orientation) {
         return this.orientation;
+    }
+
+    getPoint() {
+        return this.point;
     }
 }
 

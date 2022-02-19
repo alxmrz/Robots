@@ -54,7 +54,6 @@ export default {
     updateCoordinates() {
       this.mouseX =  this.game.input.mousePointer.x;
       this.mouseY = this.game.input.mousePointer.y;
-      console.log(this.game.input);
     }
   }
 }

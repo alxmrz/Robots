@@ -1,4 +1,3 @@
-import SceneObject from './SceneObject';
 import Phaser from "phaser";
 
 export default class Gate extends Phaser.GameObjects.Rectangle {

@@ -1,4 +1,3 @@
-import Scene from './Scene';
 import ObjectFactory from './ObjectFactory';
 import Builder from './Builder';
 import Point from "@app/Point";
@@ -6,13 +5,9 @@ import Point from "@app/Point";
 export default class Level extends Phaser.Scene{
   constructor() {
     super();
-    /*if ( !( scene instanceof Scene ) ) {
-      throw new Error( 'Scene is not provided!' );
-    }*/
     this.sceneObjects = {
       builders: []
     };
-   // this.artist = factory.getArtist( scene );
     this.factory = new ObjectFactory();
   }
   preload() {
