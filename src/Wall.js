@@ -9,8 +9,9 @@ export default class Wall extends Phaser.GameObjects.Rectangle {
     this.height = 25;
     this.fillStyle = 'brown'
     this.name = 'Wall';
-
     this.scene.add.existing(this);
+    this.scene.physics.add.existing(this);
+    this.body.setImmovable(true);
   }
 
   getPoint() {

@@ -5,9 +5,10 @@
       <div>
         <input type="button" id="buildWall" value="Строить стену" onclick="alert('Недоступно!')"/>
       </div>
-      <div>
+      <div style="width: 300px;">
         <pre>
-        <p id="objectInfo"></p>
+          <h3>Информация по объекту: </h3>
+        <p id="objectInfo">{{player}}</p>
       </pre>
       </div>
     </div>
@@ -24,6 +25,7 @@ import Level from "@app/Level";
 
 export default {
   created() {
+    this.level = new Level;
     this.game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: 'gameContainer',
@@ -37,11 +39,15 @@ export default {
         }
       },
       backgroundColor: 0x008000,
-      scene: new Level
+      scene: this.level
     });
 
   },
-
+  computed: {
+    player() {
+      return this.level.player ? JSON.stringify(this.level.player,  null, 4) : 'Объект не выбран';
+    }
+  },
   data() {
     return {
       game: null,

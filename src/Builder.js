@@ -24,7 +24,11 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
         this.height = 50;
         this.name = 'Builder';
 
+
         this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
+
+
     }
 
     buildWall() {
@@ -65,7 +69,8 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
     }
 
     moveRight(offsetX) {
-        this.addNewInstruction(
+        this.x += offsetX;
+        /*this.addNewInstruction(
             function (offset) {
                 let date = new Date();
                 if (this.offsetX === undefined) {
@@ -87,11 +92,12 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
                 return true;
             },
             offsetX
-        );
+        );*/
     }
 
     moveLeft(offsetX) {
-        this.addNewInstruction(
+        this.x -= offsetX;
+       /* this.addNewInstruction(
             function (offset) {
                 if (this.offsetX === undefined) {
 
@@ -108,7 +114,7 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
                 return true;
             },
             offsetX
-        );
+        );*/
     }
 
     moveDown(offsetY) {
