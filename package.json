@@ -18,6 +18,7 @@
     "@babel/preset-env": "^7.16.11",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.6.0",
+    "html-webpack-plugin": "^5.5.0",
     "jest": "^27.4.7",
     "jest-canvas-mock": "^2.3.1",
     "sinon": "^13.0.0",
@@ -28,7 +29,9 @@
   },
   "jest": {
     "testEnvironment": "jsdom",
-    "setupFiles": ["jest-canvas-mock"],
+    "setupFiles": [
+      "jest-canvas-mock"
+    ],
     "moduleFileExtensions": [
       "js",
       "jsx"

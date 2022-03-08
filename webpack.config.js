@@ -1,18 +1,23 @@
 const { VueLoaderPlugin } = require('vue-loader')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require("path");
 
 module.exports = {
-  entry: './src/main.js',
+  entry: {
+    main: './src/main.js'
+  },
   mode: 'development',
   output: {
-    filename: 'main.js'
+    filename: '[name].[contenthash].js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true,
   },
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@app': path.resolve(__dirname,'src')
     },
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['', '.js', '.jsx', '.html'],
     modules: [
       'node_modules',
       'bower_components',
@@ -40,7 +45,11 @@ module.exports = {
     ]
   },
   plugins: [
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Robots city',
+      template: "./public/index.html"
+    }),
   ],
   watchOptions: {
     aggregateTimeout: 200,
