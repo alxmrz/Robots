@@ -5,6 +5,7 @@
     "babel-preset-env": "^1.7.0",
     "http-server": "^14.1.0",
     "phaser": "^3.55.2",
+    "phaser3-rex-plugins": "^1.1.67",
     "vue": "^2.6.12"
   },
   "scripts": {

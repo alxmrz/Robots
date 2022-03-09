@@ -4,6 +4,7 @@ import Tower from './Tower';
 import RobotFactory from './RobotFactory';
 import Gate from './Gate';
 import Phaser from "phaser";
+import MoveTo from "phaser3-rex-plugins/plugins/moveto";
 
 export default class Builder extends Phaser.GameObjects.Rectangle {
     constructor(point, scene) {
@@ -23,12 +24,25 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
         this.width = 50;
         this.height = 50;
         this.name = 'Builder';
-
+        this.destination = null;
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+       this.moveTo = new MoveTo(this, {speed: 200, rotateToTarget: false});
+       this.moveTo.on('complate', function (gameObject, moveTo) {
+           gameObject.destination.destroy();
+       })
 
+    }
+
+    setDestination(destination) {
+        if (this.destination) {
+          //  destination.destroy();
+        }
+
+        this.destination = destination;
+        this.moveTo.moveTo(destination.x, destination.y);
     }
 
     buildWall() {
