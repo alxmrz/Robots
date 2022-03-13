@@ -1,14 +1,13 @@
 import ObjectFactory from './ObjectFactory';
-import Builder from './Builder';
 import Point from "@app/Point";
 import Wall from "@app/Wall";
-import Destination from "@app/Destination";
 
 export default class Level extends Phaser.Scene{
   constructor() {
     super();
     this.sceneObjects = {
-      builders: []
+      builders: [],
+      walls: []
     };
     this.factory = new ObjectFactory();
     this.player = null;
@@ -22,24 +21,101 @@ export default class Level extends Phaser.Scene{
   create() {
     this.input.mouse.disableContextMenu();
 
-    this.builder = this.addBuilder( 25, 75 );
+    this.builder = this.addBuilder( 125, 175 );
 
-    this.addWall(100, 50)
-    this.addWall(100, 80)
-    this.addWall(100, 120)
+    this.addWall(200, 150)
+    this.addWall(200, 180)
+    this.addWall(200, 220)
 
     this.input.on('pointerdown', (pointer) => {
        if (pointer.rightButtonDown() && this.player) {
          if (this.player.destination) this.player.destination.destroy();
 
-         this.player.setDestination(new Destination(new Point(pointer.x, pointer.y), this))
-         this.physics.moveToObject(this.player,this.player.destination, 240, 1000);
-
+         let path = this.findPath(this.player.body.position, new Point(pointer.x, pointer.y));
+         this.player.followPath(path);
        }
     })
 
 
   }
+
+  findPath(from, to) {
+    let queue = [from];
+    let processed = new Map();
+    let parents = new Map();
+    let costs  = new Map();
+    parents.set(JSON.stringify(to), null)
+    let node = null;
+    let toRec =  this.add.rectangle(to.x, to.y, 50, 50);
+    this.physics.add.existing(toRec);
+    while (node = queue.shift()) {
+      let nodeRect =  this.add.rectangle(node.x, node.y, 50, 50);
+      this.physics.add.existing(nodeRect);
+
+      if (this.physics.collide(toRec, nodeRect)) {
+        parents.set(JSON.stringify(to), node)
+        nodeRect.destroy();
+        break;
+      }
+      nodeRect.destroy();
+
+      processed.set(JSON.stringify(node), true);
+      queue.push(...this.neighborsNodes(node, processed, parents, costs))
+    }
+
+    toRec.destroy()
+    toRec.destroy()
+
+    return this.find(parents, to).reverse();
+  }
+
+  find(parents, to) {
+    let parent = parents.get(JSON.stringify(to));
+    if (!parent) {
+      return [];
+    }
+
+    return [to].concat(this.find(parents, parent));
+  }
+
+  /**
+   *
+   * @param {{x, y}} parentNode
+   * @param {Map} processed
+   * @param {Map} parents
+   * @param {Map} costs
+   * @returns {Point[]}
+   */
+  neighborsNodes(parentNode, processed, parents, costs) {
+    let nodes =  [
+      new Point(parentNode.x-50, parentNode.y),
+      new Point(parentNode.x+50, parentNode.y),
+      new Point(parentNode.x, parentNode.y-50),
+      new Point(parentNode.x, parentNode.y+50)
+    ]
+
+    nodes = nodes.filter( (node) => {
+      return !this.isOutOfMap(node)
+          && this.physics.overlapRect(node.x, node.y, 50, 50).length === 0
+          && !processed.get(JSON.stringify(node))
+    })
+
+    nodes.forEach((node) => {
+      let parentCost = costs.get(JSON.stringify(parentNode)) ? costs.get(JSON.stringify(parentNode)) : 0;
+      costs.set(JSON.stringify(node), parentCost + 1);
+      /*if (parents.get(JSON.stringify(node)) && ) {
+
+      }*/
+      parents.set(JSON.stringify(node), parentNode)
+    })
+
+    return nodes;
+  }
+
+  isOutOfMap(node) {
+    return node.x < 0 || node.x > this.canvas.clientWidth || node.y > this.canvas.clientHeight || node.y < 0
+  }
+
   update(time, delta) {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.physics.collide(this.builder, this.sceneObjects['walls'], () => {
@@ -50,15 +126,6 @@ export default class Level extends Phaser.Scene{
 
 
     if (this.player !== null) {
-      this.physics.moveTo(this.player,500, 500, 240);
-      if (this.player.destination) {
-        if (this.player.destination.getPoint() === this.player.getPoint()) {
-          alert("destroyed")
-          this.player.destination.destroy();
-        }
-        console.log('move');
-
-      }
       this.player.body.setVelocity(0);
       if (this.cursors.left.isDown) {
         this.player.body.setVelocityX(-200);
@@ -69,35 +136,6 @@ export default class Level extends Phaser.Scene{
       } else if (this.cursors.down.isDown) {
         this.player.body.setVelocityY(200);
       }
-
-     /* if (!this.player.body.velocity.equals(Phaser.Math.Vector2.ZERO)) {
-        // The distance `player` would move in one physics step:
-        this.delta.copy(this.player.body.velocity).scale(1 / this.physics.world.fps);
-
-        // For drawing
-        this.rect.setTo(
-            this.player.body.x + this.delta.x,
-            this.player.body.y + this.delta.y,
-            this.player.body.width,
-            this.player.body.height
-        );
-
-        // Check for overlaps.
-        let bodies = this.physics.overlapRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height, true, true);
-
-        // Ignore player body.
-        Phaser.Utils.Array.Remove(bodies, this.player.body);
-
-        // At least one overlap.
-        // Block on the affected axis.
-        if (bodies.length) {
-          if (this.delta.x) this.player.setVelocityX(0);
-          if (this.delta.y) this.player.setVelocityY(0);
-        }
-
-        this.graphics.clear().strokeRectShape(this.rect);
-      }*/
-
     }
 
 

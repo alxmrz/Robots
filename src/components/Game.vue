@@ -38,7 +38,7 @@ export default {
           gravity: { y: 0 }
         }
       },
-      backgroundColor: 0x008000,
+      backgroundColor: 0xf4a460,
       scene: this.level
     });
 

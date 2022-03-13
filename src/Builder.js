@@ -5,6 +5,7 @@ import RobotFactory from './RobotFactory';
 import Gate from './Gate';
 import Phaser from "phaser";
 import MoveTo from "phaser3-rex-plugins/plugins/moveto";
+import Destination from "@app/Destination";
 
 export default class Builder extends Phaser.GameObjects.Rectangle {
     constructor(point, scene) {
@@ -15,25 +16,30 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
         this.setOrigin(0, 0);
         this.setInteractive();
         this.instructions = [];
-        this.seconds = 0;
-        this.nextSecond = 0;
-        this.offsetX = undefined;
-        this.offsetY = undefined;
         this.speed = 1;
         this.scene = scene;
         this.width = 50;
         this.height = 50;
         this.name = 'Builder';
         this.destination = null;
-
+        this.path = [];
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
        this.moveTo = new MoveTo(this, {speed: 200, rotateToTarget: false});
-       this.moveTo.on('complate', function (gameObject, moveTo) {
-           gameObject.destination.destroy();
-       })
+       this.moveTo.on('complete',  (gameObject, moveTo) => {
+           if (this.path.length === 0) return;
+           this.destination.destroy();
+           this.setDestination(new Destination(this.path.shift(), this.scene));
+       });
+       this.body.setSize(45, 45, 5, 5);
 
+
+    }
+
+    followPath(path) {
+        this.setDestination(new Destination( path.shift(), this.scene));
+        this.path = path;
     }
 
     setDestination(destination) {
@@ -84,90 +90,18 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
 
     moveRight(offsetX) {
         this.x += offsetX;
-        /*this.addNewInstruction(
-            function (offset) {
-                let date = new Date();
-                if (this.offsetX === undefined) {
-                    this.offsetX = this.point.getX() + offsetX;
-                }
-
-                if (this.point.getX() < this.offsetX) {
-                    this.point.setX(this.point.getX() + this.speed);
-                    if (this.seconds !== date.getSeconds()) {
-                        this.nextSecond = date.getSeconds();
-                        this.seconds = date.getSeconds();
-                    }
-                    this.x = this.point.getX();
-
-                    return false;
-                }
-
-                this.offsetX = undefined;
-                return true;
-            },
-            offsetX
-        );*/
     }
 
     moveLeft(offsetX) {
         this.x -= offsetX;
-       /* this.addNewInstruction(
-            function (offset) {
-                if (this.offsetX === undefined) {
-
-                    this.offsetX = this.point.getX() - offset;
-
-                }
-
-                if (this.point.getX() > this.offsetX) {
-                    this.point.setX(this.point.getX() - this.speed);
-                    this.x = this.point.getX();
-                    return false;
-                }
-                this.offsetX = undefined;
-                return true;
-            },
-            offsetX
-        );*/
     }
 
     moveDown(offsetY) {
-        this.addNewInstruction(
-            function (offsetY) {
-                if (this.offsetY === undefined) {
-                    this.offsetY = this.point.getY() + offsetY;
-                }
-                if (this.point.getY() < this.offsetY) {
-                    this.point.setY(this.point.getY() + this.speed);
-                    this.y = this.point.getY();
-                    return false;
-                }
-                this.currentSprite = 0;
-                this.offsetY = undefined;
-                return true;
-            },
-            offsetY
-        );
+        this.y += offsetY;
     }
 
     moveUp(offsetY) {
-        this.addNewInstruction(
-            function (offsetY) {
-                if (this.offsetY === undefined) {
-                    this.offsetY = this.point.getY() - offsetY;
-                }
-
-                if (this.point.getY() > this.offsetY) {
-                    this.point.setY(this.point.getY() - this.speed);
-                    this.y = this.point.getY();
-                    return false;
-                }
-                this.currentSprite = 0;
-                this.offsetY = undefined;
-                return true;
-            },
-            offsetY
-        );
+        this.y -= offsetY;
     }
 
     addNewInstruction(callback, args) {
