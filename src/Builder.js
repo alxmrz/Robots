@@ -26,27 +26,21 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-       this.moveTo = new MoveTo(this, {speed: 200, rotateToTarget: false});
-       this.moveTo.on('complete',  (gameObject, moveTo) => {
-           if (this.path.length === 0) return;
-           this.destination.destroy();
-           this.setDestination(new Destination(this.path.shift(), this.scene));
-       });
-       this.body.setSize(45, 45, 5, 5);
-
-
+        this.moveTo = new MoveTo(this, {speed: 200, rotateToTarget: false});
+        this.moveTo.on('complete', (gameObject, moveTo) => {
+            if (this.path.length === 0) return;
+            this.destination.destroy();
+            this.setDestination(new Destination(this.path.shift(), this.scene));
+        });
+        this.body.setSize(45, 45, 5, 5);
     }
 
     followPath(path) {
-        this.setDestination(new Destination( path.shift(), this.scene));
+        this.setDestination(new Destination(path.shift(), this.scene));
         this.path = path;
     }
 
     setDestination(destination) {
-        if (this.destination) {
-          //  destination.destroy();
-        }
-
         this.destination = destination;
         this.moveTo.moveTo(destination.x, destination.y);
     }
@@ -54,7 +48,7 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
     buildWall() {
         this.addNewInstruction(
             function () {
-                this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()),  this.scene));
+                this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()), this.scene));
                 return true;
             }
         );
@@ -111,17 +105,14 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
     runInstructions() {
         if (this.instructions.length !== 0) {
             if (this.instructions[0][1]) {
-                var func = this.instructions[0][0].bind(this, ...[this.instructions[0][1]]);
+                let func = this.instructions[0][0].bind(this, ...[this.instructions[0][1]]);
             } else {
-                var func = this.instructions[0][0].bind(this);
+                let func = this.instructions[0][0].bind(this);
             }
 
 
             if (func()) {
                 this.instructions.shift();
-                if (this.instructions.lenght === 0) {
-                    this.currentSprite = 0;
-                }
             }
         }
     }
@@ -132,6 +123,16 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
 
     getPoint() {
         return this.point;
+    }
+
+    resetDestination() {
+        if (this.destination) {
+            this.destination.destroy();
+        }
+    }
+
+    position() {
+        return this.body.position;
     }
 }
 
