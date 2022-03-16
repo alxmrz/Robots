@@ -4,6 +4,8 @@ import Tower from './Tower';
 import RobotFactory from './RobotFactory';
 import Gate from './Gate';
 import Phaser from "phaser";
+import MoveTo from "phaser3-rex-plugins/plugins/moveto";
+import Destination from "@app/Destination";
 
 export default class Builder extends Phaser.GameObjects.Rectangle {
     constructor(point, scene) {
@@ -14,23 +16,39 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
         this.setOrigin(0, 0);
         this.setInteractive();
         this.instructions = [];
-        this.seconds = 0;
-        this.nextSecond = 0;
-        this.offsetX = undefined;
-        this.offsetY = undefined;
         this.speed = 1;
         this.scene = scene;
         this.width = 50;
         this.height = 50;
         this.name = 'Builder';
-
+        this.destination = null;
+        this.path = [];
         this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
+
+        this.moveTo = new MoveTo(this, {speed: 200, rotateToTarget: false});
+        this.moveTo.on('complete', (gameObject, moveTo) => {
+            if (this.path.length === 0) return;
+            this.destination.destroy();
+            this.setDestination(new Destination(this.path.shift(), this.scene));
+        });
+        this.body.setSize(45, 45, 5, 5);
+    }
+
+    followPath(path) {
+        this.setDestination(new Destination(path.shift(), this.scene));
+        this.path = path;
+    }
+
+    setDestination(destination) {
+        this.destination = destination;
+        this.moveTo.moveTo(destination.x, destination.y);
     }
 
     buildWall() {
         this.addNewInstruction(
             function () {
-                this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()),  this.scene));
+                this.scene.sceneObjects['builders'].push(new Wall(new Point(this.point.getX(), this.point.getY()), this.scene));
                 return true;
             }
         );
@@ -65,89 +83,19 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
     }
 
     moveRight(offsetX) {
-        this.addNewInstruction(
-            function (offset) {
-                let date = new Date();
-                if (this.offsetX === undefined) {
-                    this.offsetX = this.point.getX() + offsetX;
-                }
-
-                if (this.point.getX() < this.offsetX) {
-                    this.point.setX(this.point.getX() + this.speed);
-                    if (this.seconds !== date.getSeconds()) {
-                        this.nextSecond = date.getSeconds();
-                        this.seconds = date.getSeconds();
-                    }
-                    this.x = this.point.getX();
-
-                    return false;
-                }
-
-                this.offsetX = undefined;
-                return true;
-            },
-            offsetX
-        );
+        this.x += offsetX;
     }
 
     moveLeft(offsetX) {
-        this.addNewInstruction(
-            function (offset) {
-                if (this.offsetX === undefined) {
-
-                    this.offsetX = this.point.getX() - offset;
-
-                }
-
-                if (this.point.getX() > this.offsetX) {
-                    this.point.setX(this.point.getX() - this.speed);
-                    this.x = this.point.getX();
-                    return false;
-                }
-                this.offsetX = undefined;
-                return true;
-            },
-            offsetX
-        );
+        this.x -= offsetX;
     }
 
     moveDown(offsetY) {
-        this.addNewInstruction(
-            function (offsetY) {
-                if (this.offsetY === undefined) {
-                    this.offsetY = this.point.getY() + offsetY;
-                }
-                if (this.point.getY() < this.offsetY) {
-                    this.point.setY(this.point.getY() + this.speed);
-                    this.y = this.point.getY();
-                    return false;
-                }
-                this.currentSprite = 0;
-                this.offsetY = undefined;
-                return true;
-            },
-            offsetY
-        );
+        this.y += offsetY;
     }
 
     moveUp(offsetY) {
-        this.addNewInstruction(
-            function (offsetY) {
-                if (this.offsetY === undefined) {
-                    this.offsetY = this.point.getY() - offsetY;
-                }
-
-                if (this.point.getY() > this.offsetY) {
-                    this.point.setY(this.point.getY() - this.speed);
-                    this.y = this.point.getY();
-                    return false;
-                }
-                this.currentSprite = 0;
-                this.offsetY = undefined;
-                return true;
-            },
-            offsetY
-        );
+        this.y -= offsetY;
     }
 
     addNewInstruction(callback, args) {
@@ -157,17 +105,14 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
     runInstructions() {
         if (this.instructions.length !== 0) {
             if (this.instructions[0][1]) {
-                var func = this.instructions[0][0].bind(this, ...[this.instructions[0][1]]);
+                let func = this.instructions[0][0].bind(this, ...[this.instructions[0][1]]);
             } else {
-                var func = this.instructions[0][0].bind(this);
+                let func = this.instructions[0][0].bind(this);
             }
 
 
             if (func()) {
                 this.instructions.shift();
-                if (this.instructions.lenght === 0) {
-                    this.currentSprite = 0;
-                }
             }
         }
     }
@@ -178,6 +123,16 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
 
     getPoint() {
         return this.point;
+    }
+
+    resetDestination() {
+        if (this.destination) {
+            this.destination.destroy();
+        }
+    }
+
+    position() {
+        return this.body.position;
     }
 }
 

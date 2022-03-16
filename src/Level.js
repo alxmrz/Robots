@@ -1,208 +1,186 @@
 import ObjectFactory from './ObjectFactory';
-import Builder from './Builder';
 import Point from "@app/Point";
+import Wall from "@app/Wall";
 
-export default class Level extends Phaser.Scene{
-  constructor() {
-    super();
-    this.sceneObjects = {
-      builders: []
+export default class Level extends Phaser.Scene {
+    constructor() {
+        super();
+        this.sceneObjects = {
+            builders: [],
+            walls: []
+        };
+        this.factory = new ObjectFactory();
+        this.player = null;
+        this.cellWidth = 50;
+        this.cellHeight = 50;
+    }
+
+    preload() {
+        this.canvas = this.sys.game.canvas;
+        this.add.grid(0, 0, this.canvas.clientWidth, this.canvas.clientHeight, 25, 25).setOrigin(0, 0).setOutlineStyle(0x000000);
     };
-    this.factory = new ObjectFactory();
-  }
-  preload() {
-    this.canvas = this.sys.game.canvas;
-    this.add.grid(0, 0, this.canvas.clientWidth,  this.canvas.clientHeight, 25, 25).setOrigin(0, 0).setOutlineStyle(0x000000);
-  };
-  create() {
-    this._init();
-  }
-  update(time, delta) {
-    this.playLevelScenario();
-  }
-  _init() {
-    this.addBuilderToScene( 0, 0 );
-    this.addBuilderToScene( 25, 75 );
-    this.addBuilderToScene( 25, 125 );
 
-    let builders = this.getBuilders();
-    this.setLevelInstructions( builders );
+    create() {
+        this.input.mouse.disableContextMenu();
 
-  }
+        this.builder = this.addBuilder(125, 175);
 
-  setLevelInstructions( builders ) {
-    this.buildWalls( builders[0] );
-    this.buildFactories( builders[1] );
-  }
-  buildWalls( builder ) {
-    builder.speed = 2.5;
+        this.addWall(200, 150)
+        this.addWall(200, 180)
+        this.addWall(200, 220)
 
-    for ( let x = 0; x < this.canvas.clientWidth - 25; x += 25 ) {
-      if ( x % 400 === 0 ) {
-        builder.buildTower();
-        x += 25;
-        builder.moveRight( 50 );
-        continue
-      } else if ( x === 500 ) {
-        builder.buildGate();
-        x += 50;
-        builder.moveRight( 75 );
-        continue;
-      } else if ( x === this.canvas.clientWidth - 50 ) {
-        builder.buildTower();
-        builder.moveRight( 25 );
-        builder.moveDown( 50 );
-        x += 25;
-        continue;
-      } else {
-        builder.buildWall();
-      }
+        this.input.on('pointerdown', (pointer) => {
+            if (pointer.rightButtonDown() && this.player) {
+                this.player.resetDestination();
 
-      builder.moveRight( 25 );
+                let path = this.findPath(this.player.position(), new Point(pointer.x, pointer.y));
+                this.player.followPath(path);
+            }
+        })
     }
 
-    for ( let y = 50; y < this.canvas.clientHeight - 25; y += 25 ) {
+    /**
+     * TODO: Methods of pathfinding must be moved to game object classes
+     * @param {Point} from
+     * @param {Point} to
+     */
+    findPath(from, to) {
+        let queue = [from];
+        let processed = new Map();
+        let parents = new Map();
 
-      if ( y % 400 === 0 && y !== 0 ) {
-        builder.moveLeft( 25 );
-        builder.buildTower();
-        builder.moveRight( 25 );
-        y += 25;
-        builder.moveDown( 50 );
-        continue;
-      } else if ( y === 575 ) {
-        builder.moveLeft( 25 );
-        builder.buildTower();
-        builder.moveDown( 25 );
-        builder.moveLeft( 25 );
-        y += 25;
-        continue;
-      } else if ( y === 225 ) {
-        builder.buildGate( 'vertical' );
-        y += 50;
-        builder.moveDown( 75 );
-        continue;
-      } else {
+        //This map is for migrating to Dijkstra algorithm
+        let costs = new Map();
 
-        builder.buildWall();
-      }
+        parents.set(JSON.stringify(to), null)
+        let node = null;
+        let toRec = this.add.rectangle(to.x, to.y, this.cellWidth, this.cellHeight);
+        this.physics.add.existing(toRec);
+        while (node = queue.shift()) {
+            let nodeRect = this.add.rectangle(node.x, node.y, this.cellWidth, this.cellHeight);
+            this.physics.add.existing(nodeRect);
 
-      builder.moveDown( 25 );
+            if (this.physics.collide(toRec, nodeRect)) {
+                parents.set(JSON.stringify(to), node)
+                nodeRect.destroy();
+                break;
+            }
+            nodeRect.destroy();
+
+            processed.set(JSON.stringify(node), true);
+            queue.push(...this.neighborsNodes(node, processed, parents, costs))
+        }
+
+        toRec.destroy()
+        toRec.destroy()
+
+        return this.find(parents, to).reverse();
     }
 
-    for ( let x = this.canvas.clientWidth - 25; x > 0; x -= 25 ) {
-      if ( x % 400 === 0 ) {
-        builder.moveUp( 25 );
-        builder.moveLeft( 25 );
-        builder.buildTower();
-        builder.moveDown( 25 );
-        builder.moveLeft( 25 );
-        x -= 50;
-        continue;
-      } else if ( x === 25 ) {
-        builder.moveUp( 25 );
-        builder.moveLeft( 25 );
-        builder.buildTower();
-        x -= 25;
-        builder.moveUp( 25 );
+    find(parents, to) {
+        let parent = parents.get(JSON.stringify(to));
+        if (!parent) {
+            return [];
+        }
 
-        continue;
-      } else if ( x === 575 ) {
-        builder.buildWall();
-        builder.moveLeft( 75 );
-        builder.buildGate();
-        builder.moveLeft( 25 );
-        x -= 75;
-        continue;
-      } else if ( x !== 0 ) {
-        builder.buildWall();
-      }
-      builder.moveLeft( 25 );
+        return [to].concat(this.find(parents, parent));
     }
 
-    for ( let y = this.canvas.clientHeight - 50; y > 50; y -= 25 ) {
-      if ( y % 400 === 0 ) {
-        builder.buildTower();
-      }  else if ( y === 300 ) {
-        builder.buildWall();
-        builder.moveUp( 75 );
-        builder.buildGate( 'vertical' );
-        builder.moveUp( 25 );
-        y -= 75;
+    /**
+     *
+     * @param {{x, y}} parentNode
+     * @param {Map} processed
+     * @param {Map} parents
+     * @param {Map} costs
+     * @returns {Point[]}
+     */
+    neighborsNodes(parentNode, processed, parents, costs) {
+        let nodes = [
+            new Point(parentNode.x - this.cellWidth, parentNode.y),
+            new Point(parentNode.x + this.cellWidth, parentNode.y),
+            new Point(parentNode.x, parentNode.y - this.cellHeight),
+            new Point(parentNode.x, parentNode.y + this.cellHeight)
+        ]
 
-        continue;
-      } else {
+        nodes = nodes.filter((node) => {
+            return !this.isOutOfMap(node)
+                && this.physics.overlapRect(node.x, node.y, this.cellWidth, this.cellHeight).length === 0
+                && !processed.get(JSON.stringify(node))
+        })
 
-        builder.buildWall();
-      }
+        nodes.forEach((node) => {
+            let parentCost = costs.get(JSON.stringify(parentNode)) ? costs.get(JSON.stringify(parentNode)) : 0;
+            costs.set(JSON.stringify(node), parentCost + 1);
+            parents.set(JSON.stringify(node), parentNode)
+        })
 
-      builder.moveUp( 25 );
+        return nodes;
     }
-    builder.moveRight( 50 );
-    builder.moveDown(25 );
-  }
 
-  buildFactories( builder ) {
-    builder.speed = 5;
-    builder.moveRight( 100 );
+    isOutOfMap(node) {
+        return node.x < 0 || node.x > this.canvas.clientWidth || node.y > this.canvas.clientHeight || node.y < 0
+    }
 
-    this.buildFactoriesBlock( builder );
+    update(time, delta) {
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.physics.collide(this.builder, this.sceneObjects['walls'], () => {
+            if (this.builder.moveTo.isRunning) {
+                this.builder.moveTo.stop();
+            }
+        });
+        const speed = 200;
 
+        if (this.player !== null) {
+            this.player.body.setVelocity(0);
+            if (this.cursors.left.isDown) {
+                this.player.body.setVelocityX(-speed);
+            } else if (this.cursors.right.isDown) {
+                this.player.body.setVelocityX(speed);
+            } else if (this.cursors.up.isDown) {
+                this.player.body.setVelocityY(-speed);
+            } else if (this.cursors.down.isDown) {
+                this.player.body.setVelocityY(speed);
+            }
+        }
+    }
 
-    builder.moveDown( 150 );
-    this.buildFactoriesBlock( builder );
-    builder.moveRight( 600 );
-    builder.moveUp( 125 );
-    this.buildFactoriesBlock( builder );
+    /**
+     * @param {integer} x
+     * @param {integer} y
+     */
+    addBuilder(x, y) {
+        let builder = this.factory.getBuilder(x, y, this);
+        builder.on('pointerdown', function (pointer) {
+            this.setStrokeStyle(3, 0xffff00)
+        })
+        builder.on('pointerdown', (pointer) => {
+            this.player = builder;
+        })
+        this.input.on('pointerdown', function (pointer) {
+            if (this.player) {
+                this.player.setStrokeStyle(0, 0x000000)
+            }
+            this.player = null;
+        })
 
-    builder.moveUp( 400 );
-    this.buildFactoriesBlock( builder );
-    builder.moveLeft( 100 );
+        this.sceneObjects['builders'].push(builder);
 
-  }
-  buildFactoriesBlock( builder ) {
-    builder.buildRobotFactory();
-    builder.moveRight( 125 );
-    builder.buildRobotFactory();
+        return builder;
 
+    }
 
-    builder.moveDown( 125 );
+    /**
+     * @param {integer} x
+     * @param {integer} y
+     */
+    addWall(x, y) {
+        let wall = new Wall(new Point(x, y), this);
+        this.sceneObjects['walls'].push(wall);
 
-    builder.buildRobotFactory();
-    builder.moveLeft( 125 );
-    builder.buildRobotFactory();
+        return wall;
+    }
 
-
-
-  }
-
-  addBuilderToScene( x, y ) {
-    this.sceneObjects['builders'].push( this.factory.getBuilder( x, y, this ) );
-  }
-
-  playLevelScenario( ) {
-    let builders = this.getBuilders();
-
-    builders[0].runInstructions();
-    builders[1].runInstructions();
-
-    //Следующий код должен быть в "Движке"
-    /*for ( let builder of builders ) {
-      let localCoords = builder.getPoint();
-      this.scene.selectObjectIfClicked( eventRegister.clickCoords, localCoords, builder );
-      if ( builder.chosen && eventRegister.rightClickCoords !== undefined ) {
-        this.scene.setNewCoordsToSelectedObject( eventRegister.rightClickCoords, builder );
-      }
-
-      this.scene.moveSelectedObjectToSpecialCoords( eventRegister.rightClickCoords, builder );
-      this.artist.drawObject( builder );
-    }*/
-
-
-  }
-
-  getBuilders() {
-    return this.sceneObjects['builders'];
-  }
-
+    getBuilders() {
+        return this.sceneObjects['builders'];
+    }
 }
