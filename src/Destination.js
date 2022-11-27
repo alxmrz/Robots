@@ -1,8 +1,3 @@
-import Point from './Point';
-import Wall from './Wall';
-import Tower from './Tower';
-import RobotFactory from './RobotFactory';
-import Gate from './Gate';
 import Phaser from "phaser";
 
 export default class Destination extends Phaser.GameObjects.Arc {
