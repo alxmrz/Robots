@@ -1,6 +1,7 @@
 import ObjectFactory from './ObjectFactory';
 import Point from "@app/Point";
 import Wall from "@app/Wall";
+import PriorityQueue from "./libs/PriorityQueue";
 
 export default class Level extends Phaser.Scene {
     constructor() {
@@ -45,7 +46,8 @@ export default class Level extends Phaser.Scene {
      * @param {Point} to
      */
     findPath(from, to) {
-        let queue = [from];
+        let queue = new PriorityQueue();
+        queue.add(from, 1)
         let processed = new Map();
         let parents = new Map();
 
@@ -68,22 +70,16 @@ export default class Level extends Phaser.Scene {
             nodeRect.destroy();
 
             processed.set(JSON.stringify(node), true);
-            queue.push(...this.neighborsNodes(node, processed, parents, costs))
-        }
 
-        toRec.destroy()
+            let neighbors = this.neighborsNodes(node, processed, parents, costs);
+            neighbors.forEach((neighbor) => {
+                let cost = Math.abs(neighbor.x - to.x) + Math.abs(neighbor.y - to.y);
+                queue.add(neighbor, cost)
+            })
+        }
         toRec.destroy()
 
         return this.find(parents, to).reverse();
-    }
-
-    find(parents, to) {
-        let parent = parents.get(JSON.stringify(to));
-        if (!parent) {
-            return [];
-        }
-
-        return [to].concat(this.find(parents, parent));
     }
 
     /**
@@ -119,6 +115,15 @@ export default class Level extends Phaser.Scene {
 
     isOutOfMap(node) {
         return node.x < 0 || node.x > this.canvas.clientWidth || node.y > this.canvas.clientHeight || node.y < 0
+    }
+
+    find(parents, to) {
+        let parent = parents.get(JSON.stringify(to));
+        if (!parent) {
+            return [];
+        }
+
+        return [to].concat(this.find(parents, parent));
     }
 
     update(time, delta) {
