@@ -19,6 +19,7 @@
 - Сборка: `npm run build`
 - Тесты: `npm run tests`
 - Один тест: `npx jest tests/unit/Builder.test.js`
+- Обёртка: `make init|up|build|tests|tests-unit|tests-coverage` (`Makefile`).
 
 Обновляйте этот раздел, когда меняются команды запуска.
 

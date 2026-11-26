@@ -18,3 +18,12 @@ Also you can watch the demo here: http://i98535xh.bget.ru/robots/ (not always cu
 3. `npm run tests` — запустить unit-тесты (Jest).
 4. `npm start` — поднять `dist/` локально.
 5. Open `dist/index.html` (или адрес из `npm start`).
+
+### Makefile
+
+- `make init` — установить зависимости, собрать, прогнать тесты и запустить.
+- `make up` — запустить проект.
+- `make build` — собрать проект.
+- `make tests` — все тесты.
+- `make tests-unit` — только модульные тесты.
+- `make tests-coverage` — тесты с отчётом о покрытии (`coverage/`).
