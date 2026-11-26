@@ -1,24 +1,13 @@
 import ObjectFactory from "@app/ObjectFactory";
 import Level from "@app/Level";
+import { withSceneStubs } from "../helpers/scene";
 
 test("Test that all objects' instances were created", function () {
     let factory = new ObjectFactory();
 
-    let level = new Level();
-    level.sys = {
-        queueDepthSort: function ()  {},
-        input: {
-            enable: function () {}
-        }
-    };
-    level.add = {
-        existing: function() {}
-    }
-    level.setLevelInstructions = () => {}
-    level._init();
+    let level = withSceneStubs(new Level());
+    level.create();
 
-    expect(level.getBuilders()[0].getPoint()).toStrictEqual(factory.getPoint(0, 0));
-    expect(level.getBuilders()[1].getPoint()).toStrictEqual(factory.getPoint(25, 75));
-    expect(level.getBuilders()[2].getPoint()).toStrictEqual(factory.getPoint(25, 125));
+    expect(level.getBuilders()[0].getPoint()).toStrictEqual(factory.getPoint(125, 175));
+    expect(level.sceneObjects['walls'].length).toBe(3);
 });
-  

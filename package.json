@@ -40,9 +40,13 @@
     "moduleDirectories": [
       "node_modules"
     ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(phaser3-rex-plugins)/)"
+    ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/mocks/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/mocks/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/tests/mocks/styleMock.js",
+      "^phaser$": "<rootDir>/node_modules/phaser/dist/phaser.js",
       "^@app(.*)$": "<rootDir>/src$1"
     }
   }

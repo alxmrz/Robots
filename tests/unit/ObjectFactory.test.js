@@ -3,7 +3,7 @@ import Point from "@app/Point";
 import Wall from "@app/Wall";
 import Builder from "@app/Builder";
 import sinon from 'sinon'
-import Level from "@app/Level";
+import { createScene } from "../helpers/scene";
 
 
 test("Get builder instance when it is requested", function () {
@@ -40,19 +40,4 @@ test("Get wall instance when it is requested", function () {
 
 function createObjectFactory() {
     return new ObjectFactory();
-}
-
-function createScene() {
-    let scene = sinon.createStubInstance(Level);
-    scene.sys = {
-        queueDepthSort: function ()  {},
-        input: {
-            enable: function () {}
-        }
-    };
-    scene.add = {
-        existing: function() {}
-    }
-
-    return scene;
 }
