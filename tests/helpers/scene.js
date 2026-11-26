@@ -3,7 +3,7 @@ import Phaser from "phaser";
 /**
  * Minimal Phaser scene doubles used by unit tests.
  *
- * Phaser 3 game objects expect a scene with `sys`, `add`, `physics` and
+ * Phaser game objects expect a scene with `sys`, `add`, `physics` and
  * `input` services. Real Phaser scenes only receive them from the scene
  * manager, so tests have to provide them explicitly.
  */
@@ -29,7 +29,10 @@ function sceneStubs() {
                     setOrigin: function () {
                         return this;
                     },
-                    setOutlineStyle: function () {
+                    setStrokeStyle: function () {
+                        return this;
+                    },
+                    setCellPadding: function () {
                         return this;
                     }
                 };

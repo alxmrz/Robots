@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import ObjectFactory from './ObjectFactory';
 import Point from "@app/Point";
 import Wall from "@app/Wall";
@@ -18,7 +19,7 @@ export default class Level extends Phaser.Scene {
 
     preload() {
         this.canvas = this.sys.game.canvas;
-        this.add.grid(0, 0, this.canvas.clientWidth, this.canvas.clientHeight, 25, 25).setOrigin(0, 0).setOutlineStyle(0x000000);
+        this.add.grid(0, 0, this.canvas.clientWidth, this.canvas.clientHeight, 25, 25).setOrigin(0, 0).setStrokeStyle(1, 0x000000).setCellPadding(0);
     };
 
     create() {

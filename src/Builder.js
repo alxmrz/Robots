@@ -4,7 +4,7 @@ import Tower from './Tower';
 import RobotFactory from './RobotFactory';
 import Gate from './Gate';
 import Phaser from "phaser";
-import MoveTo from "phaser3-rex-plugins/plugins/moveto";
+import MoveTo from "phaser4-rex-plugins/plugins/moveto";
 import Destination from "@app/Destination";
 
 export default class Builder extends Phaser.GameObjects.Rectangle {

@@ -4,8 +4,8 @@
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-preset-env": "^1.7.0",
     "http-server": "^14.1.0",
-    "phaser": "^3.55.2",
-    "phaser3-rex-plugins": "^1.1.67",
+    "phaser": "^4.2.1",
+    "phaser4-rex-plugins": "^4.2.0",
     "vue": "^2.6.12"
   },
   "scripts": {
@@ -41,7 +41,7 @@
       "node_modules"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(phaser3-rex-plugins)/)"
+      "node_modules/(?!(phaser4-rex-plugins)/)"
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/mocks/fileMock.js",
