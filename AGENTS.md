@@ -6,9 +6,11 @@
 
 ## 1. Стек проекта
 
-- JavaScript (ES modules), Phaser 4 (`phaser` `^4.2.1`), Vue 2, webpack 5. Точка входа —
-  `src/main.js`.
+- JavaScript (ES modules), Phaser 4 (`phaser` `^4.2.1`), Vue 3, webpack 5. Точка входа —
+  `src/main.js` (`createApp(App).mount('#app')`).
 - Движение билдера по пути — `MoveTo` из `phaser4-rex-plugins` `^4.2.0`.
+- SFC собираются `vue-loader` 17 с `@vue/compiler-sfc`; компоненты написаны на Composition
+  API (`<script setup>`).
 - Источник истины по командам — `package.json` (секции `scripts` и `jest`).
 
 ## 2. Команды
@@ -31,7 +33,9 @@
 
 - `src/` — игровой код: `Level.js` (сцена), `Builder.js`, `Wall.js`, `Gate.js`, `Tower.js`,
   `RobotFactory.js`, `Destination.js`, `ObjectFactory.js`, `Point.js`, `libs/PriorityQueue.js`.
-- `src/components/` — Vue-обёртка (`App.vue`, `Game.vue`), создаёт `Phaser.Game`.
+- `src/components/` — Vue-обёртка на Composition API: `App.vue` → `layouts/Main.vue` →
+  `Game.vue`; `composables/useGame.js` создаёт `Phaser.Game` после монтирования и
+  уничтожает его при размонтировании, отдавая сцене колбэк для данных о выбранном объекте.
 - `tests/` — Jest-тесты (`tests/unit`) и стабы сцены (`tests/helpers/scene.js`).
 - `public/` — HTML-шаблон для `HtmlWebpackPlugin`; сборка кладётся в `dist/`.
 - `openspec/` — спеки и изменения (spec-driven workflow).
@@ -46,6 +50,16 @@
 - В Phaser 4 у `Grid` `outline` переименован в `stroke`, а `cellPadding` по умолчанию `0.5`:
   для сплошной сетки как в v3 нужны `setStrokeStyle(1, 0x000000)` и `setCellPadding(0)`.
 - Canvas-рендерер в v4 устарел; конфиг остаётся `Phaser.AUTO` (WebGL там, где доступен).
+- Vue 3 в webpack требует feature-flags через `DefinePlugin` (`__VUE_OPTIONS_API__`,
+  `__VUE_PROD_DEVTOOLS__`, `__VUE_PROD_HYDRATION_MISMATCH_DETAILS__`); без них сборка
+  предупреждает о подставленных значениях по умолчанию.
+- Алиаса `vue$ → vue/dist/vue.esm.js` больше нет: в Vue 3 файла не существует, webpack
+  берёт `vue.runtime.esm-bundler.js`. Стили SFC идут через `style-loader` (не
+  `vue-style-loader`).
+- `Phaser.Game` создаётся только в `onMounted`, когда контейнер уже в DOM (`parent`
+  принимает сам элемент, а не строку-id); `onBeforeUnmount` вызывает `game.destroy(true)`.
+- Точка ветвления в методе — максимум одна (правило проекта): в `Level` ветки кликов и
+  движения вынесены в `handlePointerDown`-хелперы, а не лежат в одном методе.
 
 ## Происхождение файлов
 

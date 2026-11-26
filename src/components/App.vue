@@ -4,14 +4,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Main from './layouts/Main.vue'
-
-export default {
-  components: {
-    Main
-  }
-}
 </script>
 
 <style>

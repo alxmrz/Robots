@@ -8,7 +8,8 @@ Also you can watch the demo here: http://i98535xh.bget.ru/robots/ (not always cu
 
 - [Phaser 4](https://phaser.io/) (`phaser` `^4.2.1`) — игровой движок, сцена и аркадная физика.
 - `phaser4-rex-plugins` `^4.2.0` — плагин `MoveTo` для движения билдера по пути.
-- Vue 2 (`vue` `^2.6.12`) — обёртка интерфейса.
+- Vue 3 (`vue` `^3.5`) — обёртка интерфейса на Composition API; SFC собираются
+  `vue-loader` 17 + `@vue/compiler-sfc`, стили инжектятся `style-loader`.
 
 ## Commands
 

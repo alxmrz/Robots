@@ -6,7 +6,7 @@
     "http-server": "^14.1.0",
     "phaser": "^4.2.1",
     "phaser4-rex-plugins": "^4.2.0",
-    "vue": "^2.6.12"
+    "vue": "^3.5.46"
   },
   "scripts": {
     "build": "npx webpack build --config webpack.config.js",
@@ -23,8 +23,9 @@
     "jest": "^27.4.7",
     "jest-canvas-mock": "^2.3.1",
     "sinon": "^13.0.0",
-    "vue-loader": "^15.9.6",
-    "vue-template-compiler": "^2.6.12",
+    "style-loader": "^4.0.0",
+    "vue-loader": "^17.4.2",
+    "@vue/compiler-sfc": "^3.5.46",
     "webpack": "^5.36.2",
     "webpack-cli": "^4.6.0"
   },

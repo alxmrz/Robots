@@ -134,5 +134,19 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
     position() {
         return this.body.position;
     }
+
+    /**
+     * Plain snapshot for the UI layer: no Phaser references, so it is safe to
+     * store in Vue refs and render.
+     *
+     * @returns {{name: string, x: number, y: number}}
+     */
+    getInfo() {
+        return {
+            name: this.name,
+            x: Math.round(this.x),
+            y: Math.round(this.y)
+        };
+    }
 }
 

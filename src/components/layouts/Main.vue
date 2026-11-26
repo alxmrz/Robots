@@ -1,15 +1,11 @@
 <template>
   <div>
-        <game />
-    </div>
+    <Game />
+  </div>
 </template>
 
-<script>
+<script setup>
 import Game from '../Game.vue'
-export default {
-  components: { Game },
-
-}
 </script>
 
 <style>

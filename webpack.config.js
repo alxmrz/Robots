@@ -1,5 +1,6 @@
 const { VueLoaderPlugin } = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 const path = require("path");
 
 module.exports = {
@@ -14,7 +15,6 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
       '@app': path.resolve(__dirname,'src')
     },
     extensions: ['', '.js', '.jsx', '.html'],
@@ -38,7 +38,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          'vue-style-loader',
+          'style-loader',
           'css-loader'
         ]
       }
@@ -46,6 +46,11 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin(),
+    new DefinePlugin({
+      __VUE_OPTIONS_API__: false,
+      __VUE_PROD_DEVTOOLS__: false,
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
+    }),
     new HtmlWebpackPlugin({
       title: 'Robots city',
       template: "./public/index.html"

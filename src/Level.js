@@ -4,6 +4,21 @@ import Point from "@app/Point";
 import Wall from "@app/Wall";
 import PriorityQueue from "./libs/PriorityQueue";
 
+/**
+ * Arrow key -> velocity direction. Only one axis is applied at a time, which
+ * matches the original `else if` chain.
+ */
+const ARROW_DIRECTIONS = [
+    { key: 'left', x: -1, y: 0 },
+    { key: 'right', x: 1, y: 0 },
+    { key: 'up', x: 0, y: -1 },
+    { key: 'down', x: 0, y: 1 }
+];
+
+const PLAYER_SPEED = 200;
+const PLAYER_HIGHLIGHT = [3, 0xffff00];
+const PLAYER_HIGHLIGHT_OFF = [0, 0x000000];
+
 export default class Level extends Phaser.Scene {
     constructor() {
         super();
@@ -13,6 +28,8 @@ export default class Level extends Phaser.Scene {
         };
         this.factory = new ObjectFactory();
         this.player = null;
+        this.playerChangeHandler = null;
+        this.lastPlayerInfo = null;
         this.cellWidth = 50;
         this.cellHeight = 50;
     }
@@ -31,14 +48,124 @@ export default class Level extends Phaser.Scene {
         this.addWall(200, 180)
         this.addWall(200, 220)
 
-        this.input.on('pointerdown', (pointer) => {
-            if (pointer.rightButtonDown() && this.player) {
-                this.player.resetDestination();
+        this.input.on('pointerdown', this.handlePointerDown, this);
+        this.events.once('shutdown', this.handleShutdown, this);
+    }
 
-                let path = this.findPath(this.player.position(), new Point(pointer.x, pointer.y));
-                this.player.followPath(path);
-            }
-        })
+    /**
+     * Single scene-level click handler: the right button targets movement,
+     * the left button clears the selection outside the selected object.
+     *
+     * @param {Phaser.Input.Pointer} pointer
+     */
+    handlePointerDown(pointer) {
+        if (pointer.rightButtonDown()) {
+            return this.movePlayerToPointer(pointer);
+        }
+
+        return this.clearSelectionOnEmptyClick(pointer);
+    }
+
+    /**
+     * @param {Phaser.Input.Pointer} pointer
+     */
+    movePlayerToPointer(pointer) {
+        if (!this.player) return;
+
+        this.player.resetDestination();
+        let path = this.findPath(this.player.position(), new Point(pointer.x, pointer.y));
+        this.player.followPath(path);
+    }
+
+    /**
+     * @param {Phaser.Input.Pointer} pointer
+     */
+    clearSelectionOnEmptyClick(pointer) {
+        if (this.isPointerOverPlayer(pointer)) return;
+
+        this.deselectPlayer();
+    }
+
+    /**
+     * @param {Phaser.Input.Pointer} pointer
+     * @returns {boolean}
+     */
+    isPointerOverPlayer(pointer) {
+        if (!this.player) return false;
+
+        return this.player.getBounds().contains(pointer.x, pointer.y);
+    }
+
+    /**
+     * @param {Phaser.GameObjects.GameObject} builder
+     */
+    selectPlayer(builder) {
+        this.clearPlayerHighlight();
+        this.player = builder;
+        builder.setStrokeStyle(...PLAYER_HIGHLIGHT);
+        this.notifyPlayerChange();
+    }
+
+    deselectPlayer() {
+        this.clearPlayerHighlight();
+        this.player = null;
+        this.notifyPlayerChange();
+    }
+
+    clearPlayerHighlight() {
+        if (!this.player) return;
+
+        this.player.setStrokeStyle(...PLAYER_HIGHLIGHT_OFF);
+    }
+
+    /**
+     * @param {Function|null} handler receives plain `{name, x, y}` data or null
+     */
+    setPlayerChangeHandler(handler) {
+        this.playerChangeHandler = handler;
+    }
+
+    /**
+     * @returns {{name: string, x: number, y: number}|null}
+     */
+    getPlayerInfo() {
+        if (!this.player) return null;
+
+        return this.player.getInfo();
+    }
+
+    /**
+     * Pushes the selected object state to the subscriber, skipping repeats.
+     */
+    notifyPlayerChange() {
+        let info = this.getPlayerInfo();
+        if (this.isSamePlayerInfo(info)) return;
+
+        this.lastPlayerInfo = info;
+        this.notifySubscriber(info);
+    }
+
+    /**
+     * @param {object|null} info
+     * @returns {boolean}
+     */
+    isSamePlayerInfo(info) {
+        return JSON.stringify(info) === JSON.stringify(this.lastPlayerInfo);
+    }
+
+    /**
+     * @param {object|null} info
+     */
+    notifySubscriber(info) {
+        if (!this.playerChangeHandler) return;
+
+        this.playerChangeHandler(info);
+    }
+
+    handleShutdown() {
+        this.playerChangeHandler = null;
+        this.lastPlayerInfo = null;
+        this.player = null;
     }
 
     /**
@@ -129,25 +256,34 @@ export default class Level extends Phaser.Scene {
 
     update(time, delta) {
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.physics.collide(this.builder, this.sceneObjects['walls'], () => {
-            if (this.builder.moveTo.isRunning) {
-                this.builder.moveTo.stop();
-            }
-        });
-        const speed = 200;
+        this.physics.collide(this.builder, this.sceneObjects['walls'], this.handleWallCollision, null, this);
 
-        if (this.player !== null) {
-            this.player.body.setVelocity(0);
-            if (this.cursors.left.isDown) {
-                this.player.body.setVelocityX(-speed);
-            } else if (this.cursors.right.isDown) {
-                this.player.body.setVelocityX(speed);
-            } else if (this.cursors.up.isDown) {
-                this.player.body.setVelocityY(-speed);
-            } else if (this.cursors.down.isDown) {
-                this.player.body.setVelocityY(speed);
-            }
+        this.movePlayerByArrows();
+        this.notifyPlayerChange();
+    }
+
+    handleWallCollision() {
+        if (this.builder.moveTo.isRunning) {
+            this.builder.moveTo.stop();
         }
+    }
+
+    movePlayerByArrows() {
+        if (this.player === null) return;
+
+        let velocity = this.getArrowVelocity();
+        this.player.body.setVelocityX(velocity.x);
+        this.player.body.setVelocityY(velocity.y);
+    }
+
+    /**
+     * @returns {{x: number, y: number}}
+     */
+    getArrowVelocity() {
+        let direction = ARROW_DIRECTIONS.find((arrow) => this.cursors[arrow.key].isDown);
+        if (!direction) return { x: 0, y: 0 };
+
+        return { x: direction.x * PLAYER_SPEED, y: direction.y * PLAYER_SPEED };
     }
 
     /**
@@ -156,23 +292,22 @@ export default class Level extends Phaser.Scene {
      */
     addBuilder(x, y) {
         let builder = this.factory.getBuilder(x, y, this);
-        builder.on('pointerdown', function (pointer) {
-            this.setStrokeStyle(3, 0xffff00)
-        })
-        builder.on('pointerdown', (pointer) => {
-            this.player = builder;
-        })
-        this.input.on('pointerdown', function (pointer) {
-            if (this.player) {
-                this.player.setStrokeStyle(0, 0x000000)
-            }
-            this.player = null;
-        })
+        builder.on('pointerdown', (pointer) => this.handleBuilderPointerDown(pointer, builder));
 
         this.sceneObjects['builders'].push(builder);
 
         return builder;
 
+    }
+
+    /**
+     * @param {Phaser.Input.Pointer} pointer
+     * @param {Phaser.GameObjects.GameObject} builder
+     */
+    handleBuilderPointerDown(pointer, builder) {
+        if (!pointer.leftButtonDown()) return;
+
+        this.selectPlayer(builder);
     }
 
     /**

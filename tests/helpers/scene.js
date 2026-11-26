@@ -9,6 +9,7 @@ import Phaser from "phaser";
  */
 function sceneStubs() {
     return {
+        events: new Phaser.Events.EventEmitter(),
         sys: {
             queueDepthSort: function () {},
             input: {
@@ -47,6 +48,8 @@ function sceneStubs() {
                     gameObject.body = {
                         setImmovable: function () {},
                         setSize: function () {},
+                        setVelocityX: function (x) { this.velocityX = x; },
+                        setVelocityY: function (y) { this.velocityY = y; },
                         position: { x: gameObject.x, y: gameObject.y }
                     };
                 }
@@ -65,7 +68,12 @@ function sceneStubs() {
             },
             keyboard: {
                 createCursorKeys: function () {
-                    return {};
+                    return {
+                        left: { isDown: false },
+                        right: { isDown: false },
+                        up: { isDown: false },
+                        down: { isDown: false }
+                    };
                 }
             }
         }
