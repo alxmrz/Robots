@@ -12,7 +12,8 @@
     "build": "npx webpack build --config webpack.config.js",
     "watch": "npx webpack watch --config webpack.config.js ",
     "start": "npx http-server ./dist/",
-    "tests": "jest"
+    "tests": "jest",
+    "tests-coverage": "jest --coverage"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",
@@ -34,6 +35,17 @@
     "setupFiles": [
       "jest-canvas-mock"
     ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    },
     "moduleFileExtensions": [
       "js",
       "jsx"

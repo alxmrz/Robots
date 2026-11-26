@@ -29,6 +29,16 @@ test("Get special DOM object by id", function () {
 
 });
 
+test("getElementById reads the element from the document", function () {
+    let element = document.createElement('canvas');
+    element.id = 'gameCanvas';
+    document.body.appendChild(element);
+
+    expect(createObjectFactory().getElementById('gameCanvas')).toBe(element);
+
+    element.remove();
+});
+
 test("Get point instance when it is requested", function () {
     expect(createObjectFactory().getPoint(20, 20)).toBeInstanceOf(Point);
 });

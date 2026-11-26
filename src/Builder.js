@@ -103,18 +103,20 @@ export default class Builder extends Phaser.GameObjects.Rectangle {
     }
 
     runInstructions() {
-        if (this.instructions.length !== 0) {
-            if (this.instructions[0][1]) {
-                let func = this.instructions[0][0].bind(this, ...[this.instructions[0][1]]);
-            } else {
-                let func = this.instructions[0][0].bind(this);
-            }
+        if (this.instructions.length === 0) return;
 
-
-            if (func()) {
-                this.instructions.shift();
-            }
+        let func = this.bindInstruction(this.instructions[0]);
+        if (func()) {
+            this.instructions.shift();
         }
+    }
+
+    bindInstruction(instruction) {
+        if (instruction[1]) {
+            return instruction[0].bind(this, ...[instruction[1]]);
+        }
+
+        return instruction[0].bind(this);
     }
 
     getOrientation(orientation) {

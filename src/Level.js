@@ -191,7 +191,7 @@ export default class Level extends Phaser.Scene {
             this.physics.add.existing(nodeRect);
 
             if (this.physics.collide(toRec, nodeRect)) {
-                parents.set(JSON.stringify(to), node)
+                this.setTargetParent(parents, to, node);
                 nodeRect.destroy();
                 break;
             }
@@ -208,6 +208,20 @@ export default class Level extends Phaser.Scene {
         toRec.destroy()
 
         return this.find(parents, to).reverse();
+    }
+
+    /**
+     * The target cell can itself be a grid node, so the node is not stored as
+     * its own parent: that would make `find` recurse forever.
+     *
+     * @param {Map} parents
+     * @param {Point} to
+     * @param {Point} node
+     */
+    setTargetParent(parents, to, node) {
+        if (JSON.stringify(node) === JSON.stringify(to)) return;
+
+        parents.set(JSON.stringify(to), node);
     }
 
     /**
