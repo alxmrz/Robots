@@ -4,10 +4,11 @@ schema: spec-driven
 # Add only constraints that should guide OpenSpec artifacts and workflows.
 # Include constraints an agent cannot infer by reading the code.
 # Keep general project documentation and discoverable codebase facts out.
-# Example:
-#   context: |
-#     Designs and tasks must cover Windows, macOS, and Linux
-#     Write all artifacts in Spanish
+context: |
+  Перед созданием или правкой любого артефакта (`proposal.md`, `spec.md`, `design.md`,
+  `tasks.md`) загрузи скилл `alxmrz_kit_spec-authoring` инструментом `skill` и работай по
+  нему. Скиллы не подгружаются автоматически: в контексте есть только их описание,
+  поэтому вызов обязателен и выполняется до первой записи файла.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.

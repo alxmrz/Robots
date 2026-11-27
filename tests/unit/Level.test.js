@@ -2,7 +2,7 @@ import ObjectFactory from "@app/ObjectFactory";
 import Level from "@app/Level";
 import Point from "@app/Point";
 import Builder from "@app/Builder";
-import { withSceneStubs } from "../helpers/scene";
+import { graphicsStub, withSceneStubs } from "../helpers/scene";
 
 test("Test that all objects' instances were created", function () {
     let factory = new ObjectFactory();
@@ -83,6 +83,97 @@ test("Right click moves the selected builder and keeps the selection", function 
     expect(builder.followPath).toHaveBeenCalledTimes(1);
 });
 
+test("Right click draws the whole found path as a polyline", function () {
+    let level = createLevel();
+    let builder = createBuilder();
+    let lines = trackGraphics(level);
+    let path = [new Point(20, 20), new Point(70, 20), new Point(120, 70)];
+    level.player = builder;
+    builder.resetDestination = jest.fn();
+    builder.followPath = jest.fn();
+    level.findPath = jest.fn().mockReturnValue(path);
+
+    level.handlePointerDown(rightClick(120, 70));
+
+    let line = lines[0];
+    expect(lines).toHaveLength(1);
+    expect(line.moveTo).toHaveBeenCalledTimes(1);
+    expect(line.moveTo).toHaveBeenCalledWith(20, 20);
+    expect(line.lineTo).toHaveBeenCalledTimes(2);
+    expect(line.lineTo).toHaveBeenNthCalledWith(1, 70, 20);
+    expect(line.lineTo).toHaveBeenNthCalledWith(2, 120, 70);
+    expect(line.strokePath).toHaveBeenCalledTimes(1);
+    expect(builder.followPath).toHaveBeenCalledWith(path);
+});
+
+test("Repeated path search replaces the debug line", function () {
+    let level = createLevel();
+    let lines = trackGraphics(level);
+    level.player = createBuilder();
+    level.player.resetDestination = jest.fn();
+    level.player.followPath = jest.fn();
+    level.findPath = jest.fn().mockReturnValue([new Point(20, 20), new Point(70, 20)]);
+
+    level.handlePointerDown(rightClick(70, 20));
+    let firstLine = lines[0];
+    level.handlePointerDown(rightClick(70, 20));
+
+    expect(lines).toHaveLength(2);
+    expect(firstLine.destroy).toHaveBeenCalledTimes(1);
+    expect(level.pathLine).toBe(lines[1]);
+});
+
+test("An empty path does not create a debug line", function () {
+    let level = createLevel();
+    let lines = trackGraphics(level);
+    level.player = createBuilder();
+    level.player.resetDestination = jest.fn();
+    level.player.followPath = jest.fn();
+    level.findPath = jest.fn().mockReturnValue([]);
+
+    expect(() => level.handlePointerDown(rightClick(70, 20))).not.toThrow();
+    expect(lines).toHaveLength(0);
+    expect(level.pathLine).toBeNull();
+});
+
+test("Deselecting the builder removes the debug line", function () {
+    let level = createLevel();
+    let lines = trackGraphics(level);
+    level.selectPlayer(createBuilder());
+    level.showPath([new Point(20, 20), new Point(70, 20)]);
+    let line = lines[0];
+
+    level.deselectPlayer();
+
+    expect(line.destroy).toHaveBeenCalledTimes(1);
+    expect(level.pathLine).toBeNull();
+});
+
+test("Selecting another builder removes the previous debug line", function () {
+    let level = createLevel();
+    let lines = trackGraphics(level);
+    level.selectPlayer(createBuilder());
+    level.showPath([new Point(20, 20), new Point(70, 20)]);
+    let firstLine = lines[0];
+
+    level.selectPlayer(createBuilder());
+
+    expect(firstLine.destroy).toHaveBeenCalledTimes(1);
+    expect(level.pathLine).toBeNull();
+});
+
+test("Scene shutdown removes the debug line", function () {
+    let level = createLevel();
+    let lines = trackGraphics(level);
+    level.showPath([new Point(20, 20), new Point(70, 20)]);
+    let line = lines[0];
+
+    level.handleShutdown();
+
+    expect(line.destroy).toHaveBeenCalledTimes(1);
+    expect(level.pathLine).toBeNull();
+});
+
 test("Left click outside the selected builder clears the selection", function () {
     let level = createLevel();
     let builder = createBuilder();
@@ -137,6 +228,20 @@ function createLevel() {
 
 function createBuilder() {
     return new Builder(new Point(20, 20), createLevel());
+}
+
+/**
+ * Replaces the scene graphics factory with a recording double and returns the
+ * created lines in creation order.
+ */
+function trackGraphics(level) {
+    let lines = [];
+    level.add.graphics = jest.fn(() => {
+        let line = graphicsStub();
+        lines.push(line);
+        return line;
+    });
+    return lines;
 }
 
 function rightClick(x, y) {

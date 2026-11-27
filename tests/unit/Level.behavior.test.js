@@ -39,6 +39,26 @@ test("Right click without a selected builder does nothing", function () {
     expect(level.findPath).not.toHaveBeenCalled();
 });
 
+test("A selected builder keeps its movement while the debug line is shown", function () {
+    let level = withSceneStubs(new Level());
+    let builder = createBuilder();
+    let path = [new Point(20, 20), new Point(70, 20)];
+    level.selectPlayer(builder);
+    level.showPath(path);
+    builder.resetDestination = jest.fn();
+    builder.followPath = jest.fn();
+    level.findPath = jest.fn().mockReturnValue(path);
+    level.cursors = cursors({ right: true });
+
+    level.handlePointerDown(rightClick(70, 20));
+    level.movePlayerByArrows();
+
+    expect(level.pathLine).not.toBeNull();
+    expect(builder.followPath).toHaveBeenCalledWith(path);
+    expect(builder.body.velocityX).toBe(200);
+    expect(builder.body.velocityY).toBe(0);
+});
+
 test("Left click without a selected builder does not throw", function () {
     let level = withSceneStubs(new Level());
 

@@ -18,6 +18,7 @@ const ARROW_DIRECTIONS = [
 const PLAYER_SPEED = 200;
 const PLAYER_HIGHLIGHT = [3, 0xffff00];
 const PLAYER_HIGHLIGHT_OFF = [0, 0x000000];
+const PATH_LINE = { width: 2, color: 0xff0000, alpha: 0.8 };
 
 export default class Level extends Phaser.Scene {
     constructor() {
@@ -32,6 +33,7 @@ export default class Level extends Phaser.Scene {
         this.lastPlayerInfo = null;
         this.cellWidth = 50;
         this.cellHeight = 50;
+        this.pathLine = null;
     }
 
     preload() {
@@ -67,6 +69,53 @@ export default class Level extends Phaser.Scene {
     }
 
     /**
+     * Draws the whole found path as a debug polyline owned by the scene.
+     * The line is not added to physics, so it never affects collisions.
+     *
+     * @param {Point[]} path
+     */
+    showPath(path) {
+        this.clearPath();
+
+        if (path.length === 0) return;
+
+        this.drawPath(path);
+    }
+
+    /**
+     * @param {Point[]} path non-empty path
+     */
+    drawPath(path) {
+        this.pathLine = this.add.graphics();
+        this.pathLine.lineStyle(PATH_LINE.width, PATH_LINE.color, PATH_LINE.alpha);
+        this.pathLine.beginPath();
+        path.forEach((point, index) => this.connectPathPoint(point, index));
+        this.pathLine.strokePath();
+    }
+
+    /**
+     * @param {Point} point
+     * @param {integer} index
+     */
+    connectPathPoint(point, index) {
+        if (index === 0) {
+            return this.pathLine.moveTo(point.getX(), point.getY());
+        }
+
+        return this.pathLine.lineTo(point.getX(), point.getY());
+    }
+
+    /**
+     * Removes the debug path line, keeping the scene free of a stale path.
+     */
+    clearPath() {
+        if (!this.pathLine) return;
+
+        this.pathLine.destroy();
+        this.pathLine = null;
+    }
+
+    /**
      * @param {Phaser.Input.Pointer} pointer
      */
     movePlayerToPointer(pointer) {
@@ -74,6 +123,7 @@ export default class Level extends Phaser.Scene {
 
         this.player.resetDestination();
         let path = this.findPath(this.player.position(), new Point(pointer.x, pointer.y));
+        this.showPath(path);
         this.player.followPath(path);
     }
 
@@ -100,6 +150,7 @@ export default class Level extends Phaser.Scene {
      * @param {Phaser.GameObjects.GameObject} builder
      */
     selectPlayer(builder) {
+        this.clearPath();
         this.clearPlayerHighlight();
         this.player = builder;
         builder.setStrokeStyle(...PLAYER_HIGHLIGHT);
@@ -107,6 +158,7 @@ export default class Level extends Phaser.Scene {
     }
 
     deselectPlayer() {
+        this.clearPath();
         this.clearPlayerHighlight();
         this.player = null;
         this.notifyPlayerChange();
@@ -163,6 +215,7 @@ export default class Level extends Phaser.Scene {
     }
 
     handleShutdown() {
+        this.clearPath();
         this.playerChangeHandler = null;
         this.lastPlayerInfo = null;
         this.player = null;

@@ -40,6 +40,9 @@ function sceneStubs() {
             },
             rectangle: function () {
                 return { destroy: function () {} };
+            },
+            graphics: function () {
+                return graphicsStub();
             }
         },
         physics: {
@@ -78,6 +81,20 @@ function sceneStubs() {
             }
         }
     };
+}
+
+/**
+ * Phaser `Graphics` double: chainable path methods plus `destroy`.
+ */
+export function graphicsStub() {
+    let graphics = {};
+    graphics.lineStyle = jest.fn().mockReturnValue(graphics);
+    graphics.beginPath = jest.fn().mockReturnValue(graphics);
+    graphics.moveTo = jest.fn().mockReturnValue(graphics);
+    graphics.lineTo = jest.fn().mockReturnValue(graphics);
+    graphics.strokePath = jest.fn().mockReturnValue(graphics);
+    graphics.destroy = jest.fn();
+    return graphics;
 }
 
 export function createScene(overrides = {}) {
